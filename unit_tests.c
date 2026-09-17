@@ -24,6 +24,72 @@ void test_create_destroy()
   ioopm_hash_table_destroy(ht);
 }
 
+void test_insert_once()
+{
+  // create new hash table
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+
+  char *key = "abc";
+  int value = 123;
+
+  // check that key is not in ht
+  int result = 0;
+  CU_ASSERT_FALSE(ioopm_hash_table_lookup(ht, key, &result));
+  CU_ASSERT_EQUAL(result, 0);
+
+  // insert key-value pair and check that the mapping exists
+  ioopm_hash_table_insert(ht, key, value);
+  CU_ASSERT_TRUE(ioopm_hash_table_lookup(ht, key, &result));
+  CU_ASSERT_EQUAL(result, value);
+
+  // destroy hash table
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_key_in_use()
+{
+  // create new hash table
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+
+  char *key = "abc";
+  int value = 123;
+  int value2 = 456;
+
+  int result = -1;
+  // insert key-value pair and check that the mapping exists
+  ioopm_hash_table_insert(ht, key, value);
+  CU_ASSERT_TRUE(ioopm_hash_table_lookup(ht, key, &result));
+  CU_ASSERT_EQUAL(result, value);
+  ioopm_hash_table_insert(ht, key, value2);
+  CU_ASSERT_TRUE(ioopm_hash_table_lookup(ht, key, &result));
+  CU_ASSERT_EQUAL(result, value2);
+
+  // destroy hash table
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_invalid_key()
+{
+  // create new hash table
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+
+  char *key = "abc";
+  int value = 123;
+  int value2 = 456;
+
+  int result = -1;
+  // insert key-value pair and check that the mapping exists
+  ioopm_hash_table_insert(ht, key, value);
+  CU_ASSERT_TRUE(ioopm_hash_table_lookup(ht, key, &result));
+  CU_ASSERT_EQUAL(result, value);
+  ioopm_hash_table_insert(ht, key, value2);
+  CU_ASSERT_TRUE(ioopm_hash_table_lookup(ht, key, &result));
+  CU_ASSERT_EQUAL(result, value2);
+
+  // destroy hash table
+  ioopm_hash_table_destroy(ht);
+}
+
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -46,7 +112,7 @@ int main()
   // the test in question. If you want to add another test, just
   // copy a line below and change the information
   if (
-      (CU_add_test(my_test_suite, "A simple test", test_create_destroy) == NULL) || 0)
+      (CU_add_test(my_test_suite, "Test insert once", test_insert_once) == NULL) || (CU_add_test(my_test_suite, "Test key in use", test_key_in_use) == NULL) || 0)
   {
     // If adding any of the tests fails, we tear down CUnit and exit
     CU_cleanup_registry();
