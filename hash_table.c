@@ -29,22 +29,24 @@ ioopm_hash_table_t *ioopm_hash_table_create(void)
     return calloc(1, sizeof(ioopm_hash_table_t));
 }
 
-void destroy_linked_list(entry_t *prev, entry_t *next, entry_t *curr)
+void destroy_linked_list(entry_t *curr, entry_t *next)
 {
-    if (next->next == NULL)
+    if (next == NULL)
     {
-        free(next);
-        return destroy_linked_list(curr, next->next, curr->next)
+        free(curr);
     }
-
-    if ()
+    else
+    {
+        entry_t *new_curr = curr->next; // new current
+        free(curr);
+        return destroy_linked_list(new_curr, next->next);
+    }
 }
 
 /// @brief Delete a hash table and free its memory
 /// @param ht a hash table to be deleted
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
 { // TODO: make recursive?
-    // TODO: pekare på pekare på pekare på föregående
     for (int i = 0; i < 17; i++)
     {
         entry_t *curr_list = ht->buckets[i];
@@ -52,7 +54,12 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
         {
             continue;
         }
+        else
+        {
+            destroy_linked_list(curr_list, curr_list->next);
+        }
     }
+    free(ht);
 }
 
 static size_t string_knr_hash(const char *str)
