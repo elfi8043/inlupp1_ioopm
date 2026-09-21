@@ -30,17 +30,27 @@ ioopm_hash_table_t *ioopm_hash_table_create(void)
     return calloc(1, sizeof(ioopm_hash_table_t));
 }
 
-static void destroy_linked_list(entry_t *curr, entry_t *next)
+// static void destroy_linked_list(entry_t *curr)
+//{
+//     if (curr == NULL)
+//     {
+//         return;
+//     }
+//     else
+//     {
+//         entry_t *new_curr = curr->next; // new current
+//         free(curr);
+//         return destroy_linked_list(new_curr);
+//     }
+// }
+
+static void destroy_linked_list(entry_t *curr)
 {
-    if (next == NULL)
-    {
-        free(curr);
-    }
-    else
+    while (curr != NULL)
     {
         entry_t *new_curr = curr->next; // new current
         free(curr);
-        return destroy_linked_list(new_curr, next->next);
+        curr = new_curr;
     }
 }
 
@@ -57,7 +67,7 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
         }
         else
         {
-            destroy_linked_list(curr_list, curr_list->next);
+            destroy_linked_list(curr_list);
         }
     }
     free(ht);

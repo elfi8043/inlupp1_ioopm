@@ -104,10 +104,25 @@ void test_destroy_existing_entry()
   CU_ASSERT_TRUE(ioopm_hash_table_lookup(ht, key, &result));
   CU_ASSERT_EQUAL(result, value);
   CU_ASSERT_TRUE(ioopm_hash_table_remove(ht, key, &result));
-  CU_ASSERT_FALSE(ioopm_hash_table_lookup(ht, key, &result));  
+  CU_ASSERT_FALSE(ioopm_hash_table_lookup(ht, key, &result));
   CU_ASSERT_EQUAL(result, value);
 
   // destroy hash table
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_destroy_long_list()
+{
+  // create new hash table
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  char *keys[10] = {"ab", "as", "aQ", "be", "bv", "bC", "bT", "ch", "cy", "cF"};
+  int val = 0;
+  for (int i = 0; i < 10; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], val);
+    val += 1;
+  }
+
   ioopm_hash_table_destroy(ht);
 }
 
@@ -147,7 +162,11 @@ int main()
   // the test in question. If you want to add another test, just
   // copy a line below and change the information
   if (
-      (CU_add_test(my_test_suite, "Test insert once", test_insert_once) == NULL) || (CU_add_test(my_test_suite, "Test key in use", test_key_in_use) == NULL) || (CU_add_test(my_test_suite, "Test destroy existing entry", test_destroy_existing_entry) == NULL) || (CU_add_test(my_test_suite, "Test destroy non existing entry", test_destroy_non_existing_entry) == NULL) ||0)
+      (CU_add_test(my_test_suite, "Test insert once", test_insert_once) == NULL) ||
+      (CU_add_test(my_test_suite, "Test key in use", test_key_in_use) == NULL) ||
+      (CU_add_test(my_test_suite, "Test destroy existing entry", test_destroy_existing_entry) == NULL) ||
+      (CU_add_test(my_test_suite, "Test destroy non existing entry", test_destroy_non_existing_entry) == NULL) ||
+      (CU_add_test(my_test_suite, "Test destroy long list", test_destroy_long_list) == NULL) || 0)
   {
     // If adding any of the tests fails, we tear down CUnit and exit
     CU_cleanup_registry();
