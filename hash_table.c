@@ -7,6 +7,8 @@
 
 typedef struct entry entry_t;
 
+#define No_buckets 17
+
 struct entry
 {
     char *key;     // holds the key
@@ -16,9 +18,9 @@ struct entry
 
 struct hash_table
 {
-    // DODGE: hard-coding number of buckets as 17.
+    // DODGE: hard-coding number of buckets as No_buckets.
     // NOTE: addressing this dodge is optional.
-    entry_t buckets[17];
+    entry_t buckets[No_buckets];
 };
 
 /// @brief Create a new hash table
@@ -28,7 +30,7 @@ ioopm_hash_table_t *ioopm_hash_table_create(void)
     return calloc(1, sizeof(ioopm_hash_table_t));
 }
 
-void destroy_linked_list(entry_t *curr, entry_t *next)
+static void destroy_linked_list(entry_t *curr, entry_t *next)
 {
     if (next == NULL)
     {
@@ -46,7 +48,7 @@ void destroy_linked_list(entry_t *curr, entry_t *next)
 /// @param ht a hash table to be deleted
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
 {
-    for (int i = 0; i < 17; i++)
+    for (int i = 0; i < No_buckets; i++)
     {
         entry_t *curr_list = ht->buckets[i].next;
         if (curr_list == NULL)
@@ -84,7 +86,7 @@ static entry_t *entry_create(char *key, int value, entry_t *next)
 // ASSUMES KEY EXISTS
 static entry_t *find_previous_entry(ioopm_hash_table_t *ht, char *key)
 {
-    size_t bucket = string_knr_hash(key) % 17;
+    size_t bucket = string_knr_hash(key) % No_buckets;
     entry_t *list = &ht->buckets[bucket];
     while (list->next != NULL)
     {
@@ -109,10 +111,13 @@ bool ioopm_hash_table_remove(ioopm_hash_table_t *ht, char *key, int *result)
     if (strcmp(previous->next->key, key) == 0)
     {
         *result = previous->next->value;
-        if (previous->next->next == NULL) {
+        if (previous->next->next == NULL)
+        {
             free(previous->next);
             previous->next = NULL;
-        } else {
+        }
+        else
+        {
             entry_t *temp = previous->next;
             free(previous->next);
             previous->next = temp->next;
