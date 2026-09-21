@@ -93,7 +93,6 @@ static entry_t *entry_create(char *key, int value, entry_t *next)
     return entry;
 }
 
-// ASSUMES KEY EXISTS
 static entry_t *find_previous_entry(ioopm_hash_table_t *ht, char *key)
 {
     size_t bucket = string_knr_hash(key) % No_buckets;
