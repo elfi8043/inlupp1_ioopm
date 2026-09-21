@@ -81,11 +81,6 @@ static entry_t *entry_create(char *key, int value, entry_t *next)
     return entry;
 }
 
-static void entry_destroy(entry_t *entry)
-{
-    free(entry);
-}
-
 // ASSUMES KEY EXISTS
 static entry_t *find_previous_entry(ioopm_hash_table_t *ht, char *key)
 {
@@ -101,6 +96,33 @@ static entry_t *find_previous_entry(ioopm_hash_table_t *ht, char *key)
     }
     // Either we are at the end of the list or at the previous node
     return list;
+}
+
+bool ioopm_hash_table_remove(ioopm_hash_table_t *ht, char *key, int *result)
+{
+    entry_t *previous = find_previous_entry(ht, key);
+
+    if (previous->next == NULL)
+    {
+        return false;
+    }
+    if (strcmp(previous->next->key, key) == 0)
+    {
+        *result = previous->next->value;
+        if (previous->next->next == NULL) {
+            free(previous->next);
+            previous->next = NULL;
+        } else {
+            entry_t *temp = previous->next;
+            free(previous->next);
+            previous->next = temp->next;
+        }
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, char *key, int value)

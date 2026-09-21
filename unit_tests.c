@@ -90,6 +90,41 @@ void test_invalid_key()
   ioopm_hash_table_destroy(ht);
 }
 
+void test_destroy_existing_entry()
+{
+  // create new hash table
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+
+  char *key = "abc";
+  int value = 123;
+
+  int result = -1;
+  // insert key-value pair and check that the mapping exists
+  ioopm_hash_table_insert(ht, key, value);
+  CU_ASSERT_TRUE(ioopm_hash_table_lookup(ht, key, &result));
+  CU_ASSERT_EQUAL(result, value);
+  CU_ASSERT_TRUE(ioopm_hash_table_remove(ht, key, &result));
+  CU_ASSERT_FALSE(ioopm_hash_table_lookup(ht, key, &result));  
+  CU_ASSERT_EQUAL(result, value);
+
+  // destroy hash table
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_destroy_non_existing_entry()
+{
+  // create new hash table
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+
+  char *key = "abc";
+  int result = -1;
+  CU_ASSERT_FALSE(ioopm_hash_table_remove(ht, key, &result));
+  CU_ASSERT_FALSE(ioopm_hash_table_lookup(ht, key, &result));
+  CU_ASSERT_EQUAL(result, -1);
+  // destroy hash table
+  ioopm_hash_table_destroy(ht);
+}
+
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -112,7 +147,7 @@ int main()
   // the test in question. If you want to add another test, just
   // copy a line below and change the information
   if (
-      (CU_add_test(my_test_suite, "Test insert once", test_insert_once) == NULL) || (CU_add_test(my_test_suite, "Test key in use", test_key_in_use) == NULL) || 0)
+      (CU_add_test(my_test_suite, "Test insert once", test_insert_once) == NULL) || (CU_add_test(my_test_suite, "Test key in use", test_key_in_use) == NULL) || (CU_add_test(my_test_suite, "Test destroy existing entry", test_destroy_existing_entry) == NULL) || (CU_add_test(my_test_suite, "Test destroy non existing entry", test_destroy_non_existing_entry) == NULL) ||0)
   {
     // If adding any of the tests fails, we tear down CUnit and exit
     CU_cleanup_registry();
