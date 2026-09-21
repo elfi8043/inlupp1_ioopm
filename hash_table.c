@@ -173,3 +173,8 @@ bool ioopm_hash_table_lookup(ioopm_hash_table_t *ht, char *key, int *result)
         return false;
     }
 }
+
+bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, char *key) {
+    int result = -1;
+    return ioopm_hash_table_lookup(ht, key, &result);
+}

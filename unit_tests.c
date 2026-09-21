@@ -140,6 +140,57 @@ void test_destroy_non_existing_entry()
   ioopm_hash_table_destroy(ht);
 }
 
+void test_has_key()
+{
+  // create new hash table
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+
+  char *key = "abc";
+  char *key2 = "def";
+  char *key3 = "ghi";
+  char *key4 = "jkl";
+  int value = 123;
+  int value2 = 456;
+  int result = -1;
+
+  // insert key-value pair and check that the mapping exists
+  ioopm_hash_table_insert(ht, key, value);
+  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, key));
+  CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht, key2));
+
+  ioopm_hash_table_t *ht2 = ioopm_hash_table_create();
+
+  ioopm_hash_table_insert(ht2, key, value2);
+  ioopm_hash_table_insert(ht2, key2, value2);
+  ioopm_hash_table_insert(ht2, key3, value2);
+  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht2, key));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht2, key2));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht2, key3));
+  CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht2, key4));
+
+  ioopm_hash_table_t *ht3 = ioopm_hash_table_create();
+
+  ioopm_hash_table_insert(ht3, key, value2);
+  ioopm_hash_table_remove(ht3, key, &result);
+  CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht3, key));
+
+  ioopm_hash_table_t *ht4 = ioopm_hash_table_create();
+
+  ioopm_hash_table_insert(ht4, key, value2);
+  ioopm_hash_table_insert(ht4, key2, value2);
+  ioopm_hash_table_insert(ht4, key3, value2);
+  ioopm_hash_table_remove(ht4, key2, &result);
+  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht4, key));
+  CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht4, key2));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht4, key3));
+
+  // destroy hash table
+  ioopm_hash_table_destroy(ht);
+  ioopm_hash_table_destroy(ht2);
+  ioopm_hash_table_destroy(ht3);
+  ioopm_hash_table_destroy(ht4);
+}
+
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -166,7 +217,8 @@ int main()
       (CU_add_test(my_test_suite, "Test key in use", test_key_in_use) == NULL) ||
       (CU_add_test(my_test_suite, "Test destroy existing entry", test_destroy_existing_entry) == NULL) ||
       (CU_add_test(my_test_suite, "Test destroy non existing entry", test_destroy_non_existing_entry) == NULL) ||
-      (CU_add_test(my_test_suite, "Test destroy long list", test_destroy_long_list) == NULL) || 0)
+      (CU_add_test(my_test_suite, "Test destroy long list", test_destroy_long_list) == NULL) ||
+      (CU_add_test(my_test_suite, "Test has key", test_has_key) == NULL) || 0)
   {
     // If adding any of the tests fails, we tear down CUnit and exit
     CU_cleanup_registry();
