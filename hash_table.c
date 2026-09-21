@@ -45,7 +45,7 @@ void destroy_linked_list(entry_t *curr, entry_t *next)
 /// @brief Delete a hash table and free its memory
 /// @param ht a hash table to be deleted
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
-{ // TODO: make recursive?
+{
     for (int i = 0; i < 17; i++)
     {
         entry_t *curr_list = ht->buckets[i].next;
@@ -121,20 +121,15 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, char *key, int value)
 
 bool ioopm_hash_table_lookup(ioopm_hash_table_t *ht, char *key, int *result)
 {
-    // find bucket
-    size_t bucket = string_knr_hash(key) % 17;
+    entry_t *previous = find_previous_entry(ht, key);
 
-    // look for an entry with the key we want
-    entry_t *current = ht->buckets[bucket].next;
-    while (current != NULL && strcmp(current->key, key) != 0)
+    if (previous->next == NULL)
     {
-        current = current->next;
+        return false;
     }
-
-    // if the key exists, return the value, otherwise, indicate that the lookup failed
-    if (current != NULL)
+    if (strcmp(previous->next->key, key) == 0)
     {
-        *result = current->value;
+        *result = previous->next->value;
         return true;
     }
     else
