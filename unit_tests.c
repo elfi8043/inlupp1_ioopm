@@ -247,17 +247,18 @@ void test_iterating_over_ht()
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
   ioopm_hash_table_iterator_t *it = ioopm_hash_table_iterator_create(ht);
   CU_ASSERT_TRUE(ioopm_hash_table_iterator_at_end(it));
+  ioopm_hash_table_iterator_destroy(it);
 
   char *key = "abc";
   int value = 123;
   ioopm_hash_table_insert(ht, key, value);
-  ioopm_hash_table_iterator_advance(it);
+  ioopm_hash_table_iterator_t *it2 = ioopm_hash_table_iterator_create(ht);
+  CU_ASSERT_EQUAL(key, ioopm_hash_table_iterator_current_key(it2));
+  CU_ASSERT_EQUAL(value, ioopm_hash_table_iterator_current_value(it2));
+  ioopm_hash_table_iterator_advance(it2);
+  CU_ASSERT_TRUE(ioopm_hash_table_iterator_at_end(it2));
 
-  CU_ASSERT_EQUAL(key, ioopm_hash_table_iterator_current_key(it));
-  CU_ASSERT_EQUAL(value, ioopm_hash_table_iterator_current_value(it));
-  CU_ASSERT_TRUE(ioopm_hash_table_iterator_at_end(it));
-
-  ioopm_hash_table_iterator_destroy(it);
+  ioopm_hash_table_iterator_destroy(it2);
   ioopm_hash_table_destroy(ht);
 }
 
