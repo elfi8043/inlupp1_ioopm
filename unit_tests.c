@@ -251,7 +251,7 @@ void test_iterating_over_ht()
   int value = 123;
   ioopm_hash_table_insert(ht, key, value);
   ioopm_hash_table_iterator_advance(it);
-  
+
   CU_ASSERT_EQUAL(key, ioopm_hash_table_iterator_current_key(it));
   CU_ASSERT_EQUAL(value, ioopm_hash_table_iterator_current_value(it));
   CU_ASSERT_TRUE(ioopm_hash_table_iterator_at_end(it));
@@ -271,17 +271,38 @@ void test_iterator_several_entries()
     ioopm_hash_table_insert(ht, keys[i], values[i]);
   }
 
+  bool *visited[3] = {false, false, false};
   int iteration_count = 0;
-
   ioopm_hash_table_iterator_t *it = ioopm_hash_table_iterator_create(ht);
   while (!ioopm_hash_table_iterator_at_end(it))
   {
-    iteration_count++;
+    if (ioopm_hash_table_iterator_current_key(it) == "abc")
+    {
+      visited[0] = true;
+    }
+    if (ioopm_hash_table_iterator_current_key(it) == "qwe")
+    {
+      visited[1] = true;
+    }
+    if (ioopm_hash_table_iterator_current_key(it) == "asd")
+    {
+      visited[2] = true;
+    }
+
     ioopm_hash_table_iterator_advance(it);
+    assert(!ioopm_hash_table_iterator_at_end(it) && "iterator at end when advancing");
+    iteration_count += 1;
+    assert(!(iteration_count >= 3) && "iteration count too high!");
   }
 
-  ioopm_hash_table_iterator_destroy(ht);
-  CU_ASSERT_EQUAL(iteration_count, 3);
+  for (int j = 0; j < 3; j++)
+  {
+    CU_ASSERT_TRUE(visited[j]);
+  }
+
+  ioopm_hash_table_iterator_destroy(it);
+  ioopm_hash_table_destroy(ht);
+  CU_ASSERT_EQUAL(iteration_count, 2);
 }
 
 int main()
