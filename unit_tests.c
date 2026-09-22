@@ -1,6 +1,7 @@
 #include <CUnit/Basic.h>
 #include "hash_table.h"
 #include "hash_table_iterator.h"
+#include <assert.h>
 
 int init_suite(void)
 {
@@ -271,7 +272,7 @@ void test_iterator_several_entries()
     ioopm_hash_table_insert(ht, keys[i], values[i]);
   }
 
-  bool *visited[3] = {false, false, false};
+  bool visited[3] = {false, false, false};
   int iteration_count = 0;
   ioopm_hash_table_iterator_t *it = ioopm_hash_table_iterator_create(ht);
   while (!ioopm_hash_table_iterator_at_end(it))
@@ -305,6 +306,42 @@ void test_iterator_several_entries()
   CU_ASSERT_EQUAL(iteration_count, 2);
 }
 
+void test_same_bucket()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  char *keys[10] = {"ab", "as", "aQ", "be", "bv", "bC", "bT", "ch", "cy", "cF"};
+  int val = 0;
+  for (int i = 0; i < 10; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], val);
+    val += 1;
+  }
+
+  bool visited[3] = {false, false, false};
+  ioopm_hash_table_iterator_t *it = ioopm_hash_table_iterator_create(ht);
+  int iteration_count = 0;
+  while (!ioopm_hash_table_iterator_at_end(it))
+  {
+    if (ioopm_hash_table_iterator_current_key(it) == "ab")
+    {
+      visited[0] = true;
+    }
+    if (ioopm_hash_table_iterator_current_key(it) == "as")
+    {
+      visited[1] = true;
+    }
+    if (ioopm_hash_table_iterator_current_key(it) == "bv")
+    {
+      visited[2] = true;
+    }
+
+    ioopm_hash_table_iterator_advance(it);
+    assert(!ioopm_hash_table_iterator_at_end(it) && "iterator at end when advancing");
+    iteration_count += 1;
+    assert(!(iteration_count >= 10) && "iteration count too high!");
+  }
+}
+
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -335,6 +372,9 @@ int main()
       (CU_add_test(my_test_suite, "Test hashtable size", test_hashtable_size) == NULL) ||
       (CU_add_test(my_test_suite, "Test hashtable is empty", test_hashtable_is_empty) == NULL) ||
       (CU_add_test(my_test_suite, "Test has key", test_has_key) == NULL) ||
+      (CU_add_test(my_test_suite, "Test iterating over table", test_iterating_over_ht) == NULL) ||
+      (CU_add_test(my_test_suite, "Test iterator several", test_iterator_several_entries) == NULL) ||
+      (CU_add_test(my_test_suite, "Test same bucket", test_same_bucket) == NULL) ||
       (CU_add_test(my_test_suite, "Test iterating over hashtable", test_iterating_over_ht) == NULL) || 0)
   {
     // If adding any of the tests fails, we tear down CUnit and exit
