@@ -122,14 +122,15 @@ bool ioopm_hash_table_remove(ioopm_hash_table_t *ht, char *key, int *result)
         *result = previous->next->value;
         if (previous->next->next == NULL)
         {
-            free(previous->next);
+            entry_t *temp = previous->next;
             previous->next = NULL;
+            free(temp);
         }
         else
         {
             entry_t *temp = previous->next;
-            free(previous->next);
-            previous->next = temp->next;
+            previous->next = previous->next->next;
+            free(temp);
         }
         return true;
     }
@@ -174,7 +175,31 @@ bool ioopm_hash_table_lookup(ioopm_hash_table_t *ht, char *key, int *result)
     }
 }
 
-bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, char *key) {
+bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, char *key)
+{
     int result = -1;
     return ioopm_hash_table_lookup(ht, key, &result);
+}
+
+static int size_linked_list(entry_t *curr)
+{
+    int sum = 0;
+    while (curr != NULL)
+    {
+        entry_t *new_curr = curr->next; // new current
+        sum += 1;
+        curr = new_curr;
+    }
+    return sum;
+}
+
+int ioopm_hash_table_size(ioopm_hash_table_t *ht)
+{
+    int sum = 0;
+    for (int i = 0; i < No_buckets; i++)
+    {
+        // Returns No nodes of linked list
+        sum += size_linked_list(ht->buckets[i].next);
+    }
+    return sum;
 }

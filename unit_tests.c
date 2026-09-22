@@ -191,6 +191,37 @@ void test_has_key()
   ioopm_hash_table_destroy(ht4);
 }
 
+void test_hashtable_size()
+{
+  // test empty
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  CU_ASSERT_EQUAL(ioopm_hash_table_size(ht), 0);
+
+  // test singleton
+  char *key = "abc";
+  int value = 123;
+  ioopm_hash_table_insert(ht, key, value);
+  CU_ASSERT_EQUAL(ioopm_hash_table_size(ht), 1);
+
+  // test larger table
+  char *keys[10] = {"ac", "ag", "al", "ba", "bu", "bi", "ch", "ta", "ga", "qz"};
+  int val = 0;
+  for (int i = 0; i < 10; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], val);
+    val += 1;
+  }
+  CU_ASSERT_EQUAL(ioopm_hash_table_size(ht), 11);
+
+  // test after remove
+  int result = -1;
+  ioopm_hash_table_remove(ht, "al", &result);
+
+  CU_ASSERT_EQUAL(ioopm_hash_table_size(ht), 10);
+
+  ioopm_hash_table_destroy(ht);
+}
+
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -218,6 +249,7 @@ int main()
       (CU_add_test(my_test_suite, "Test destroy existing entry", test_destroy_existing_entry) == NULL) ||
       (CU_add_test(my_test_suite, "Test destroy non existing entry", test_destroy_non_existing_entry) == NULL) ||
       (CU_add_test(my_test_suite, "Test destroy long list", test_destroy_long_list) == NULL) ||
+      (CU_add_test(my_test_suite, "Test hashtable size", test_hashtable_size) == NULL) ||
       (CU_add_test(my_test_suite, "Test has key", test_has_key) == NULL) || 0)
   {
     // If adding any of the tests fails, we tear down CUnit and exit
