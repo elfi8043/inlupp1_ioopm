@@ -21,6 +21,7 @@ struct hash_table
     // DODGE: hard-coding number of buckets as No_buckets.
     // NOTE: addressing this dodge is optional.
     entry_t buckets[No_buckets];
+    int size;
 };
 
 /// @brief Create a new hash table
@@ -132,6 +133,7 @@ bool ioopm_hash_table_remove(ioopm_hash_table_t *ht, char *key, int *result)
             previous->next = previous->next->next;
             free(temp);
         }
+        ht->size -= 1;
         return true;
     }
     else
@@ -153,6 +155,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, char *key, int value)
     else
     {
         previous->next = entry_create(key, value, NULL);
+        ht->size += 1;
     }
 }
 
@@ -181,25 +184,12 @@ bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, char *key)
     return ioopm_hash_table_lookup(ht, key, &result);
 }
 
-static int size_linked_list(entry_t *curr)
-{
-    int sum = 0;
-    while (curr != NULL)
-    {
-        entry_t *new_curr = curr->next; // new current
-        sum += 1;
-        curr = new_curr;
-    }
-    return sum;
-}
-
 int ioopm_hash_table_size(ioopm_hash_table_t *ht)
 {
-    int sum = 0;
-    for (int i = 0; i < No_buckets; i++)
-    {
-        // Returns No nodes of linked list
-        sum += size_linked_list(ht->buckets[i].next);
-    }
-    return sum;
+    return ht->size;
+}
+
+bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht)
+{
+    return (ht->size == 0);
 }

@@ -222,6 +222,24 @@ void test_hashtable_size()
   ioopm_hash_table_destroy(ht);
 }
 
+void test_hashtable_is_empty()
+{
+  // test empty
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  CU_ASSERT_TRUE(ioopm_hash_table_is_empty(ht));
+
+  char *key = "abc";
+  int value = 123;
+  ioopm_hash_table_insert(ht, key, value);
+  CU_ASSERT_FALSE(ioopm_hash_table_is_empty(ht));
+
+  int result = -1;
+  ioopm_hash_table_remove(ht, "abc", &result);
+
+  CU_ASSERT_TRUE(ioopm_hash_table_is_empty(ht));
+  ioopm_hash_table_destroy(ht);
+}
+
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -250,6 +268,7 @@ int main()
       (CU_add_test(my_test_suite, "Test destroy non existing entry", test_destroy_non_existing_entry) == NULL) ||
       (CU_add_test(my_test_suite, "Test destroy long list", test_destroy_long_list) == NULL) ||
       (CU_add_test(my_test_suite, "Test hashtable size", test_hashtable_size) == NULL) ||
+      (CU_add_test(my_test_suite, "Test hashtable is empty", test_hashtable_is_empty) == NULL) ||
       (CU_add_test(my_test_suite, "Test has key", test_has_key) == NULL) || 0)
   {
     // If adding any of the tests fails, we tear down CUnit and exit
