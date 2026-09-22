@@ -1,5 +1,6 @@
 #include <CUnit/Basic.h>
 #include "hash_table.h"
+#include "hash_table_iterator.h"
 
 int init_suite(void)
 {
@@ -240,6 +241,49 @@ void test_hashtable_is_empty()
   ioopm_hash_table_destroy(ht);
 }
 
+void test_iterating_over_ht()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  ioopm_hash_table_iterator_t *it = ioopm_hash_table_iterator_create(ht);
+  CU_ASSERT_TRUE(ioopm_hash_table_iterator_at_end(it));
+
+  char *key = "abc";
+  int value = 123;
+  ioopm_hash_table_insert(ht, key, value);
+  ioopm_hash_table_iterator_advance(it);
+  
+  CU_ASSERT_EQUAL(key, ioopm_hash_table_iterator_current_key(it));
+  CU_ASSERT_EQUAL(value, ioopm_hash_table_iterator_current_value(it));
+  CU_ASSERT_TRUE(ioopm_hash_table_iterator_at_end(it));
+
+  ioopm_hash_table_iterator_destroy(it);
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_iterator_several_entries()
+{
+  char *keys[3] = {"abc", "qwe", "asd"};
+  int values[3] = {0, 1, 2};
+
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  for (int i = 0; i != 3; ++i)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+
+  int iteration_count = 0;
+
+  ioopm_hash_table_iterator_t *it = ioopm_hash_table_iterator_create(ht);
+  while (!ioopm_hash_table_iterator_at_end(it))
+  {
+    iteration_count++;
+    ioopm_hash_table_iterator_advance(it);
+  }
+
+  ioopm_hash_table_iterator_destroy(ht);
+  CU_ASSERT_EQUAL(iteration_count, 3);
+}
+
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -269,7 +313,8 @@ int main()
       (CU_add_test(my_test_suite, "Test destroy long list", test_destroy_long_list) == NULL) ||
       (CU_add_test(my_test_suite, "Test hashtable size", test_hashtable_size) == NULL) ||
       (CU_add_test(my_test_suite, "Test hashtable is empty", test_hashtable_is_empty) == NULL) ||
-      (CU_add_test(my_test_suite, "Test has key", test_has_key) == NULL) || 0)
+      (CU_add_test(my_test_suite, "Test has key", test_has_key) == NULL) ||
+      (CU_add_test(my_test_suite, "Test iterating over hashtable", test_iterating_over_ht) == NULL) || 0)
   {
     // If adding any of the tests fails, we tear down CUnit and exit
     CU_cleanup_registry();
