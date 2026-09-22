@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <assert.h>
 
 typedef struct entry entry_t;
 
@@ -243,7 +244,33 @@ ioopm_hash_table_iterator_t *ioopm_hash_table_iterator_create(ioopm_hash_table_t
     return it;
 }
 
+void ioopm_hash_table_iterator_destroy(ioopm_hash_table_iterator_t *it)
+{
+    free(it);
+}
+
 bool ioopm_hash_table_iterator_at_end(ioopm_hash_table_iterator_t *it)
 {
     return it->current_bucket == No_buckets;
+}
+
+void ioopm_hash_table_iterator_advance(ioopm_hash_table_iterator_t *it)
+{
+    assert(!ioopm_hash_table_iterator_at_end(it) && "Already at the end");
+
+    if (it->current_entry->next == NULL) {
+        skip_sentinel_nodes(it);
+    } else {
+        it->current_entry = it->current_entry->next;
+    }
+}
+
+char *ioopm_hash_table_iterator_current_key(ioopm_hash_table_iterator_t *it)
+{
+    return it->current_entry->key;
+}
+
+int ioopm_hash_table_iterator_current_value(ioopm_hash_table_iterator_t *it)
+{
+    return it->current_entry->value;
 }
