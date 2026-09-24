@@ -231,7 +231,6 @@ static void skip_sentinel_nodes(ioopm_hash_table_iterator_t *it)
            it->current_entry == &it->ht->buckets[it->current_bucket])
     {
         advance_iterator_state(it);
-        printf("%d", it->current_bucket);
     }
 }
 
@@ -257,15 +256,8 @@ bool ioopm_hash_table_iterator_at_end(ioopm_hash_table_iterator_t *it)
 
 void ioopm_hash_table_iterator_advance(ioopm_hash_table_iterator_t *it)
 {
-    printf(" %d FROM ITERATOR ADVANCE", it->current_bucket);
-    if (it->current_entry->next == NULL)
-    {
-        skip_sentinel_nodes(it);
-    }
-    else
-    {
-        it->current_entry = it->current_entry->next;
-    }
+    advance_iterator_state(it);
+    skip_sentinel_nodes(it);
 }
 
 char *ioopm_hash_table_iterator_current_key(ioopm_hash_table_iterator_t *it)
