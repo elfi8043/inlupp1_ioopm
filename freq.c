@@ -42,6 +42,14 @@ int main(int argc, char *argv[])
             word = strtok(result, ",.!? :;\n");
             while (word != NULL)
             {
+                if (ioopm_hash_table_has_key(ht, word)) {
+                    int val = 0;
+                    ioopm_hash_table_lookup(ht, word, &val);
+                    val += 1;
+                    ioopm_hash_table_insert(ht, word, val);
+                } else {
+                    ioopm_hash_table_insert(ht, word, 1);
+                }
                 word = strtok(NULL, ",.!? :;\n");
             }
 
