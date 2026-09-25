@@ -64,7 +64,6 @@ void insert_file_words_ht(char *filename, ioopm_hash_table_t *ht)
                 // insert
                 ioopm_hash_table_insert(ht, strdup(token), 1);
             }
-            free(token);
             token = strtok(NULL, ",.:!? \n");
         }
     }

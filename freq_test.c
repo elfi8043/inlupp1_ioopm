@@ -38,33 +38,21 @@ int compare_frequency(const void *word1, const void *word2)
     return w1->frequency - w2->frequency;
 }
 
-void insert_file_words_ht(char *filename, ioopm_hash_table_t *ht)
+void insert_file_words_arr(char *filename, char *arr[], int *last_free, int *capacity)
 {
     FILE *in = fopen(filename, "r");
     char *result = NULL;
     size_t size = 0;
     ssize_t nread;
-    // read each word in the file
+
+    int i = last_free;
     while ((nread = getline(&result, &size, in)) != -1)
     {
         char *token = strtok(result, ",.:!? \n");
         while (token != NULL)
         {
-            // check if word in ht
-            if (ioopm_hash_table_has_key(ht, token))
-            {
-                // increase value by 1
-                int val = -1;
-                ioopm_hash_table_lookup(ht, token, &val);
-                val++;
-                ioopm_hash_table_insert(ht, strdup(token), val);
-            }
-            else
-            {
-                // insert
-                ioopm_hash_table_insert(ht, strdup(token), 1);
-            }
-            free(token);
+            arr[i] = strdup(token);
+            i += 1;
             token = strtok(NULL, ",.:!? \n");
         }
     }
@@ -77,11 +65,14 @@ int main(int argc, char *argv[])
 {
     // Create an empty hash table
     ioopm_hash_table_t *ht = ioopm_hash_table_create();
+    int initial_capacity = 1000;
+    int size = 0;
 
+    char *keys[] = calloc(initial_capacity, sizeof(char *));
     // For each file argument,
     for (int i = 1; i < argc; i++)
     {
-        insert_file_words_ht(argv[i], ht);
+        insert_file_words_arr(argv[i], keys, &size);
     }
 
     // Flatten ht into array
