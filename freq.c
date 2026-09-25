@@ -30,8 +30,12 @@ struct word
 
 //}
 
-int compare_frequency(void *word1, void *word2) {
-    return word1->frequency - (word_t) word2.frequency;
+int compare_frequency(const void *word1, const void *word2)
+{
+    const word_t *w1 = word1;
+    const word_t *w2 = word2;
+
+    return w1->frequency - w2->frequency;
 }
 
 int main(int argc, char *argv[])
@@ -88,5 +92,9 @@ int main(int argc, char *argv[])
 
         //Sort the words in array according to their frequencies
         qsort(words, ht_size, sizeof(word_t), compare_frequency);
+
+        for (int j = 0; j < ht_size; j++) {
+            printf("%s: %d\n", words[j].key, words[j].frequency);
+        }
     }
 }
