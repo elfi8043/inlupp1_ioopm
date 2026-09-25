@@ -68,5 +68,16 @@ int main(int argc, char *argv[])
 
             // free(result);
         }
+
+        int ht_size = ioopm_hash_table_size(ht);
+
+        word_t words[ht_size];
+
+        ioopm_hash_table_iterator_t *it = ioopm_hash_table_iterator_create;
+        for (int i = 0; i < ht_size; i++) {
+            char *curr_word = ioopm_hash_table_iterator_current_key(it);
+            int curr_frequency = ioopm_hash_table_iterator_current_value(it);
+            words[i] = {.word = curr_word, .frequency = curr_frequency};
+        }
     }
 }
