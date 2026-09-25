@@ -46,3 +46,5 @@ char *ioopm_hash_table_iterator_current_key(ioopm_hash_table_iterator_t *it);
 /// @param it iterator operated upon
 /// @return the value if the current entry
 int ioopm_hash_table_iterator_current_value(ioopm_hash_table_iterator_t *it);
+
+void ioopm_hash_table_print(ioopm_hash_table_t *ht);

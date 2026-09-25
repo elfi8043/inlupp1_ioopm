@@ -23,10 +23,10 @@ typedef struct word word_t;
 struct word
 {
     char *key;     // holds the key
-    int frequency;     // holds the frequency
+    int frequency; // holds the frequency
 };
 
-//char *file_to_string(char *file_name) {
+// char *file_to_string(char *file_name) {
 
 //}
 
@@ -38,6 +38,47 @@ int compare_frequency(const void *word1, const void *word2)
     return w1->frequency - w2->frequency;
 }
 
+void insert_file_words_ht(char *filename, ioopm_hash_table_t *ht)
+{
+    FILE *in = fopen(filename, "r");
+    char *result = NULL;
+    size_t size = 0;
+    ssize_t nread;
+    // read each word in the file
+    while ((nread = getline(&result, &size, in)) != -1)
+    {
+        word_t word;
+        word.key = strdup(strtok(result, ",.!? :;\n"));
+        while (word.key != NULL)
+        {
+            if (ioopm_hash_table_has_key(ht, word.key))
+            {
+                // puts(word.key);
+                word.frequency = 0;
+                ioopm_hash_table_lookup(ht, word.key, &word.frequency);
+                word.frequency += 1;
+                ioopm_hash_table_insert(ht, word.key, word.frequency);
+            }
+            else
+            {
+                // puts(word.key);
+                ioopm_hash_table_insert(ht, word.key, 1);
+            }
+            char *temp = strtok(NULL, ",.!? :;\n");
+            if (temp != NULL)
+            {
+                word.key = strdup(temp);
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+    free(result);
+    fclose(in);
+}
+
 int main(int argc, char *argv[])
 {
     // Create an empty hash table
@@ -46,55 +87,30 @@ int main(int argc, char *argv[])
     // For each file argument,
     for (int i = 1; i < argc; i++)
     {
-        char *filename = argv[i];
-        puts("hello");
-        FILE *in = fopen(filename, "r");
-        puts("goodbye");
-        char *result = NULL;
-        size_t size = 0;
-        ssize_t nread;
+        insert_file_words_ht(argv[i], ht);
+    }
 
-        // read each word in the file
-        while ((nread = getline(&result, &size, in)) != -1)
-        {
-            // printf("Retrieved line of length %zd:\n", nread);
-            // fwrite(result, nread, 1, stdout);
-            word_t word;
-            word.key = strtok(result, ",.!? :;\n");
-            while (word.key != NULL)
-            {
-                if (ioopm_hash_table_has_key(ht, word.key)) {
-                    word.frequency = 0;
-                    ioopm_hash_table_lookup(ht, word.key, &word.frequency);
-                    word.frequency += 1;
-                    ioopm_hash_table_insert(ht, word.key, word.frequency);
-                } else {
-                    ioopm_hash_table_insert(ht, word.key, 1);
-                }
-                word.key = strtok(NULL, ",.!? :;\n");
-            }
+    // Flatten ht into array
+    int ht_size = ioopm_hash_table_size(ht);
 
-            // free(result);
-        }
+    word_t words[ht_size];
 
-        int ht_size = ioopm_hash_table_size(ht);
+    ioopm_hash_table_iterator_t *it = ioopm_hash_table_iterator_create(ht);
+    for (int i = 0; i < ht_size; i++)
+    {
+        char *curr_word = ioopm_hash_table_iterator_current_key(it);
+        int curr_frequency = ioopm_hash_table_iterator_current_value(it);
+        word_t word_to_insert = {.key = curr_word, .frequency = curr_frequency};
+        words[i] = word_to_insert;
+        ioopm_hash_table_iterator_advance(it);
+    }
 
-        word_t words[ht_size];
+    // Sort the words in array according to their frequencies
+    qsort(words, ht_size, sizeof(word_t), compare_frequency);
 
-        ioopm_hash_table_iterator_t *it = ioopm_hash_table_iterator_create(ht);
-        for (int i = 0; i < ht_size; i++) {
-            char *curr_word = ioopm_hash_table_iterator_current_key(it);
-            int curr_frequency = ioopm_hash_table_iterator_current_value(it);
-            word_t word_to_insert = {.key = curr_word, .frequency = curr_frequency};
-            words[i] = word_to_insert;
-            ioopm_hash_table_iterator_advance(it);
-        }
-
-        //Sort the words in array according to their frequencies
-        qsort(words, ht_size, sizeof(word_t), compare_frequency);
-
-        for (int j = 0; j < ht_size; j++) {
-            printf("%s: %d\n", words[j].key, words[j].frequency);
-        }
+    // print sorted array
+    for (int j = 0; j < ht_size; j++)
+    {
+        printf("%s: %d\n", words[j].key, words[j].frequency);
     }
 }

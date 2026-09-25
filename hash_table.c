@@ -269,3 +269,16 @@ int ioopm_hash_table_iterator_current_value(ioopm_hash_table_iterator_t *it)
 {
     return it->current_entry->value;
 }
+
+void ioopm_hash_table_print(ioopm_hash_table_t *ht)
+{
+    ioopm_hash_table_iterator_t *it = ioopm_hash_table_iterator_create(ht);
+
+    while (!ioopm_hash_table_iterator_at_end(it))
+    {
+        printf("%s:%d\n", ioopm_hash_table_iterator_current_key(it), ioopm_hash_table_iterator_current_value(it));
+        ioopm_hash_table_iterator_advance(it);
+    }
+
+    ioopm_hash_table_iterator_destroy(it);
+}
