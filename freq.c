@@ -30,6 +30,10 @@ struct word
 
 //}
 
+int compare_frequency(void *word1, void *word2) {
+    return word1->frequency - (word_t) word2.frequency;
+}
+
 int main(int argc, char *argv[])
 {
     // Create an empty hash table
@@ -73,11 +77,16 @@ int main(int argc, char *argv[])
 
         word_t words[ht_size];
 
-        ioopm_hash_table_iterator_t *it = ioopm_hash_table_iterator_create;
+        ioopm_hash_table_iterator_t *it = ioopm_hash_table_iterator_create(ht);
         for (int i = 0; i < ht_size; i++) {
             char *curr_word = ioopm_hash_table_iterator_current_key(it);
             int curr_frequency = ioopm_hash_table_iterator_current_value(it);
-            words[i] = {.word = curr_word, .frequency = curr_frequency};
+            word_t word_to_insert = {.key = curr_word, .frequency = curr_frequency};
+            words[i] = word_to_insert;
+            ioopm_hash_table_iterator_advance(it);
         }
+
+        //Sort the words in array according to their frequencies
+        qsort(words, ht_size, sizeof(word_t), compare_frequency);
     }
 }
