@@ -39,7 +39,7 @@ static void destroy_linked_list(entry_t *curr)
     {
         entry_t *new_curr = curr->next;
         free(curr->key);
-        free(curr); // Assumes caller destroys current key
+        free(curr);
         curr = new_curr;
     }
 }
@@ -78,7 +78,7 @@ static entry_t *entry_create(char *key, int value, entry_t *next)
 {
     // TODO: change ownership, ht takes copy
     entry_t *entry = calloc(1, sizeof(entry_t));
-    entry->key = strdup(key); // Assumes caller maintains and destroys pointer
+    entry->key = strdup(key);
     entry->value = value;
     entry->next = next;
     return entry;
@@ -115,12 +115,14 @@ bool ioopm_hash_table_remove(ioopm_hash_table_t *ht, char *key, int *result)
         {
             entry_t *temp = previous->next;
             previous->next = NULL;
+            free(temp->key);
             free(temp);
         }
         else
         {
             entry_t *temp = previous->next;
             previous->next = previous->next->next;
+            free(temp->key);
             free(temp);
         }
         ht->size -= 1;

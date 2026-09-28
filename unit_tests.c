@@ -253,7 +253,10 @@ void test_iterating_over_ht()
   int value = 123;
   ioopm_hash_table_insert(ht, key, value);
   ioopm_hash_table_iterator_t *it2 = ioopm_hash_table_iterator_create(ht);
-  CU_ASSERT_EQUAL(key, ioopm_hash_table_iterator_current_key(it2));
+
+  puts(ioopm_hash_table_iterator_current_key(it2));
+  CU_ASSERT_TRUE(strcmp(ioopm_hash_table_iterator_current_key(it2), key) == 0);
+
   CU_ASSERT_EQUAL(value, ioopm_hash_table_iterator_current_value(it2));
 
   ioopm_hash_table_iterator_advance(it2);
@@ -279,15 +282,15 @@ void test_iterator_several_entries()
   ioopm_hash_table_iterator_t *it = ioopm_hash_table_iterator_create(ht);
   while (!ioopm_hash_table_iterator_at_end(it))
   {
-    if (ioopm_hash_table_iterator_current_key(it) == "abc")
+    if (strcmp(ioopm_hash_table_iterator_current_key(it), "abc") == 0)
     {
       visited[0] = true;
     }
-    if (ioopm_hash_table_iterator_current_key(it) == "qwe")
+    if (strcmp(ioopm_hash_table_iterator_current_key(it), "qwe") == 0)
     {
       visited[1] = true;
     }
-    if (ioopm_hash_table_iterator_current_key(it) == "asd")
+    if (strcmp(ioopm_hash_table_iterator_current_key(it), "asd") == 0)
     {
       visited[2] = true;
     }
