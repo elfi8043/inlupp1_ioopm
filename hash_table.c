@@ -33,26 +33,13 @@ ioopm_hash_table_t *ioopm_hash_table_create(void)
     return calloc(1, sizeof(ioopm_hash_table_t));
 }
 
-// static void destroy_linked_list(entry_t *curr)
-//{
-//     if (curr == NULL)
-//     {
-//         return;
-//     }
-//     else
-//     {
-//         entry_t *new_curr = curr->next; // new current
-//         free(curr);
-//         return destroy_linked_list(new_curr);
-//     }
-// }
-
 static void destroy_linked_list(entry_t *curr)
 {
     while (curr != NULL)
     {
-        entry_t *new_curr = curr->next; // new current
-        free(curr);
+        entry_t *new_curr = curr->next;
+        free(curr->key);
+        free(curr); // Assumes caller destroys current key
         curr = new_curr;
     }
 }
@@ -89,8 +76,9 @@ static size_t string_knr_hash(const char *str)
 
 static entry_t *entry_create(char *key, int value, entry_t *next)
 {
+    // TODO: change ownership, ht takes copy
     entry_t *entry = calloc(1, sizeof(entry_t));
-    entry->key = key;
+    entry->key = strdup(key); // Assumes caller maintains and destroys pointer
     entry->value = value;
     entry->next = next;
     return entry;

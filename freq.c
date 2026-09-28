@@ -57,12 +57,12 @@ void insert_file_words_ht(char *filename, ioopm_hash_table_t *ht)
                 int val = -1;
                 ioopm_hash_table_lookup(ht, token, &val);
                 val++;
-                ioopm_hash_table_insert(ht, strdup(token), val);
+                ioopm_hash_table_insert(ht, token, val);
             }
             else
             {
                 // insert
-                ioopm_hash_table_insert(ht, strdup(token), 1);
+                ioopm_hash_table_insert(ht, token, 1);
             }
             token = strtok(NULL, ",.:!? \n");
         }
