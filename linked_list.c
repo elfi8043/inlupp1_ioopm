@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "linked_list.h"
-
-typedef struct node node_t;
+#include "list_iterator.h"
+#include <assert.h>
 
 struct node
 {
@@ -159,4 +159,66 @@ int ioopm_list_get(ioopm_list_t *list, int index)
     }
     node_t *prev = find_previous_node(list, index);
     return prev->next->val;
+}
+
+//////////////////////////////////////////////
+//////////// ITERATOR
+//////////////////////////////////////////////
+
+struct list_iterator
+{
+    ioopm_list_t *list;
+    node_t *current_node;
+    int curr_index;
+};
+
+ioopm_list_iterator_t *ioopm_list_iterator_create(ioopm_list_t *l)
+{
+    ioopm_list_iterator_t *iter = calloc(1, sizeof(ioopm_list_iterator_t));
+    iter->list = l;
+    iter->current_node = l->first;
+    return iter;
+}
+
+void ioopm_list_iterator_destroy(ioopm_list_iterator_t *iter)
+{
+    free(iter);
+}
+
+bool ioopm_list_iterator_at_end(ioopm_list_iterator_t *iter)
+{
+    return (iter->current_node->next = NULL);
+}
+
+void ioopm_list_iterator_advance(ioopm_list_iterator_t *iter)
+{
+    assert(iter->current_node->next != NULL && "AT END");
+    iter->current_node = iter->current_node->next;
+    iter->curr_index += 1;
+}
+
+int ioopm_list_iterator_current(ioopm_list_iterator_t *iter)
+{
+    return iter->current_node->val;
+}
+
+/// NOTE: REMOVE IS OPTIONAL TO IMPLEMENT
+/// @brief Remove the current element from the underlying list
+/// @param iter the iterator
+/// @return the removed element
+int ioopm_list_iterator_remove(ioopm_list_iterator_t *iter)
+{
+    int val = ioopm_list_remove(iter->list, iter->curr_index);
+    iter->curr_index -= 1;
+    return val;
+}
+
+/// NOTE: INSERT IS OPTIONAL TO IMPLEMENT
+/// @brief Insert a new element into the underlying list making the current element it's next
+/// @param iter the iterator
+/// @param element the element to be inserted
+void ioopm_list_iterator_insert(ioopm_list_iterator_t *iter, int element)
+{
+    ioopm_list_insert(iter->list, iter->curr_index, element);
+    iter->curr_index += 1;
 }

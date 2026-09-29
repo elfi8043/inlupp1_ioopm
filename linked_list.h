@@ -3,6 +3,8 @@
 
 typedef struct list ioopm_list_t; /// Meta: struct definition goes in C file
 
+typedef struct node node_t;
+
 /// @brief Creates a new empty list
 /// @return an empty linked list
 ioopm_list_t *ioopm_list_create(void);
@@ -39,7 +41,7 @@ int ioopm_list_last(ioopm_list_t *list);
 /// @param list the linked list that will be extended
 /// @param index the position in the list
 /// @param value the value to be inserted
-void ioopm_list_insert(ioopm_list_t *list, int index, int value);
+void ioopm_list_insert(ioopm_list_t *list, int index, int value); // alexander
 
 /// @brief Remove an element from a linked list in O(n) time.
 /// The valid values of index are [0,n-1] for a list of n elements,
@@ -48,7 +50,7 @@ void ioopm_list_insert(ioopm_list_t *list, int index, int value);
 /// @param list the linked list
 /// @param index the position in the list
 /// @return the value removed
-int ioopm_list_remove(ioopm_list_t *list, int index);
+int ioopm_list_remove(ioopm_list_t *list, int index); // elis
 
 /// @brief Retrieve an element from a linked list in O(n) time.
 /// The valid values of index are [0,n-1] for a list of n elements,
