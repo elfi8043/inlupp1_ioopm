@@ -36,7 +36,6 @@ void test_append()
   {
     ioopm_list_append(l, i);
   };
-  printf("%d", ioopm_list_get(l, 0));
   CU_ASSERT_EQUAL(ioopm_list_get(l, 5), 5);
   ioopm_list_destroy(l);
 }
@@ -48,7 +47,8 @@ void test_prepend()
   {
     ioopm_list_prepend(l, i);
   };
-  CU_ASSERT_EQUAL(ioopm_list_get(l, 5), 5);
+
+  CU_ASSERT_EQUAL(ioopm_list_get(l, 5), 4);
   ioopm_list_destroy(l);
 }
 

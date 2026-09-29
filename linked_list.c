@@ -58,7 +58,8 @@ void ioopm_list_prepend(ioopm_list_t *list, int value)
     }
     else
     {
-        list->first = node_create(value, list->first->next);
+        node_t *node = node_create(value, list->first);
+        list->first = node;
         list->size += 1;
     }
 }
@@ -67,14 +68,14 @@ void ioopm_list_append(ioopm_list_t *list, int value)
 {
     if (list->size == 0)
     {
-        puts("EMPTY");
         empty_insert(list, value);
     }
     else
     {
-        list->last->next = node_create(value, NULL);
+        node_t *node = node_create(value, NULL);
+        list->last->next = node;
+        list->last = node;
         list->size += 1;
-        printf("%d", list->first->val);
     }
 }
 
@@ -90,25 +91,23 @@ int ioopm_list_last(ioopm_list_t *list)
 
 static node_t *find_previous_node(ioopm_list_t *list, int index)
 {
-    if (index == list->size)
+    int count = 0;
+    node_t *curr = list->first;
+    while (count < (index - 1))
     {
-        return list->last;
+        curr = curr->next;
+        count += 1;
     }
-    else
-    {
-        int count = 0;
-        node_t *curr = list->first;
-        while (count < (index - 1))
-        {
-            count += 1;
-            curr = curr->next;
-        }
-        return curr;
-    }
+    return curr;
 }
 
 int ioopm_list_remove(ioopm_list_t *list, int index)
 {
+    if (list->size == 0)
+    {
+        puts("EMPTY LIST");
+        return -99;
+    }
     if (list->size == 1)
     {
         free(list->first);
