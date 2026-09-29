@@ -1,5 +1,6 @@
 #include <CUnit/Basic.h>
 #include "linked_list.h"
+#include "list_iterator.h"
 
 int init_suite(void)
 {
@@ -102,6 +103,28 @@ void test_remove()
   ioopm_list_destroy(l);
 }
 
+void test_iter_basic()
+{
+  ioopm_list_t *l = ioopm_list_create();
+  for (int i = 0; i < 10; i++)
+  {
+    ioopm_list_insert(l, i, i);
+  };
+
+  ioopm_list_iterator_t *iter = ioopm_list_iterator_create(l);
+
+  int j = 0;
+  while (!ioopm_list_iterator_at_end(iter))
+  {
+    CU_ASSERT_EQUAL(ioopm_list_iterator_current(iter), j);
+    ioopm_list_iterator_advance(iter);
+    j++;
+  }
+
+  ioopm_list_iterator_destroy(iter);
+  ioopm_list_destroy(l);
+}
+
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -131,6 +154,7 @@ int main()
       (CU_add_test(my_test_suite, "test append prepend", test_append_prepend) == NULL) ||
       (CU_add_test(my_test_suite, "test insert", test_insert) == NULL) ||
       (CU_add_test(my_test_suite, "test remove", test_remove) == NULL) ||
+      (CU_add_test(my_test_suite, "test iter basic", test_iter_basic) == NULL) ||
       0)
   {
     // If adding any of the tests fails, we tear down CUnit and exit

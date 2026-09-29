@@ -132,8 +132,8 @@ void ioopm_list_insert(ioopm_list_t *list, int index, int value)
     else
     {
         prev->next = node_create(value, prev->next);
+        list->size += 1;
     }
-    list->size += 1;
 }
 
 int ioopm_list_size(ioopm_list_t *list)
@@ -187,12 +187,12 @@ void ioopm_list_iterator_destroy(ioopm_list_iterator_t *iter)
 
 bool ioopm_list_iterator_at_end(ioopm_list_iterator_t *iter)
 {
-    return (iter->current_node->next = NULL);
+    return (iter->current_node == NULL);
 }
 
 void ioopm_list_iterator_advance(ioopm_list_iterator_t *iter)
 {
-    assert(iter->current_node->next != NULL && "AT END");
+    // assert(iter->current_node->next != NULL && "AT END");
     iter->current_node = iter->current_node->next;
     iter->curr_index += 1;
 }
@@ -209,6 +209,7 @@ int ioopm_list_iterator_current(ioopm_list_iterator_t *iter)
 int ioopm_list_iterator_remove(ioopm_list_iterator_t *iter)
 {
     int val = ioopm_list_remove(iter->list, iter->curr_index);
+    iter->current_node = find_previous_node(iter->list);
     iter->curr_index -= 1;
     return val;
 }
@@ -220,5 +221,6 @@ int ioopm_list_iterator_remove(ioopm_list_iterator_t *iter)
 void ioopm_list_iterator_insert(ioopm_list_iterator_t *iter, int element)
 {
     ioopm_list_insert(iter->list, iter->curr_index, element);
+    iter->current_node = iter->current_node->next;
     iter->curr_index += 1;
 }
