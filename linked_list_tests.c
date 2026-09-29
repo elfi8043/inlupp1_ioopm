@@ -32,10 +32,11 @@ void test_list_is_empty()
 void test_append()
 {
   ioopm_list_t *l = ioopm_list_create();
-  for (int i = 0; i < 10; i++)
+  for (int i = 0; i < 12; i++)
   {
     ioopm_list_append(l, i);
   };
+  printf("%d", ioopm_list_get(l, 0));
   CU_ASSERT_EQUAL(ioopm_list_get(l, 5), 5);
   ioopm_list_destroy(l);
 }
