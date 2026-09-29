@@ -65,6 +65,43 @@ void test_append_prepend()
   ioopm_list_destroy(l);
 }
 
+void test_insert()
+{
+  ioopm_list_t *l = ioopm_list_create();
+  for (int i = 0; i < 10; i++)
+  {
+    ioopm_list_insert(l, i, i);
+  };
+  CU_ASSERT_EQUAL(ioopm_list_get(l, 5), 5);
+  ioopm_list_destroy(l);
+}
+
+void test_remove()
+{
+  ioopm_list_t *l = ioopm_list_create();
+  for (int i = 0; i < 10; i++)
+  {
+    ioopm_list_insert(l, i, i);
+  };
+  int size = ioopm_list_size(l);
+
+  // remove last elem
+  int removed = ioopm_list_remove(l, 9);
+  CU_ASSERT_EQUAL(ioopm_list_size(l), (size - 1));
+  CU_ASSERT_EQUAL(removed, 9);
+
+  // remove middle elem
+  removed = ioopm_list_remove(l, 4);
+  CU_ASSERT_EQUAL(ioopm_list_size(l), (size - 2));
+  CU_ASSERT_EQUAL(removed, 4);
+
+  // remove
+  removed = ioopm_list_remove(l, 5);
+  CU_ASSERT_EQUAL(removed, 6);
+  CU_ASSERT_EQUAL(ioopm_list_size(l), (size - 3));
+  ioopm_list_destroy(l);
+}
+
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -92,6 +129,8 @@ int main()
       (CU_add_test(my_test_suite, "test append", test_append) == NULL) ||
       (CU_add_test(my_test_suite, "test prepend", test_prepend) == NULL) ||
       (CU_add_test(my_test_suite, "test append prepend", test_append_prepend) == NULL) ||
+      (CU_add_test(my_test_suite, "test insert", test_insert) == NULL) ||
+      (CU_add_test(my_test_suite, "test remove", test_remove) == NULL) ||
       0)
   {
     // If adding any of the tests fails, we tear down CUnit and exit
