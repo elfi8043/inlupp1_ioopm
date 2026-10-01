@@ -15,7 +15,7 @@ typedef struct entry entry_t;
 struct entry
 {
     char *key;     // holds the key
-    int value;     // holds the value
+    elem_t value;  // holds the value
     entry_t *next; // points to the next entry (possibly NULL)
 };
 
@@ -75,7 +75,7 @@ static size_t string_knr_hash(const char *str)
     return result;
 }
 
-static entry_t *entry_create(char *key, int value, entry_t *next)
+static entry_t *entry_create(char *key, elem_t value, entry_t *next)
 {
     // TODO: change ownership, ht takes copy
     entry_t *entry = calloc(1, sizeof(entry_t));
@@ -101,7 +101,7 @@ static entry_t *find_previous_entry(ioopm_hash_table_t *ht, char *key)
     return list;
 }
 
-bool ioopm_hash_table_remove(ioopm_hash_table_t *ht, char *key, int *result)
+bool ioopm_hash_table_remove(ioopm_hash_table_t *ht, char *key, elem_t *result)
 {
     entry_t *previous = find_previous_entry(ht, key);
 
@@ -135,7 +135,7 @@ bool ioopm_hash_table_remove(ioopm_hash_table_t *ht, char *key, int *result)
     }
 }
 
-void ioopm_hash_table_insert(ioopm_hash_table_t *ht, char *key, int value)
+void ioopm_hash_table_insert(ioopm_hash_table_t *ht, char *key, elem_t value)
 {
     // find previous entry, or the last entry if the key does not exist
     entry_t *previous = find_previous_entry(ht, key);
@@ -152,7 +152,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, char *key, int value)
     }
 }
 
-bool ioopm_hash_table_lookup(ioopm_hash_table_t *ht, char *key, int *result)
+bool ioopm_hash_table_lookup(ioopm_hash_table_t *ht, char *key, elem_t *result)
 {
     entry_t *previous = find_previous_entry(ht, key);
 
@@ -173,7 +173,7 @@ bool ioopm_hash_table_lookup(ioopm_hash_table_t *ht, char *key, int *result)
 
 bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, char *key)
 {
-    int result = -1;
+    elem_t result = int_elem(-1);
     return ioopm_hash_table_lookup(ht, key, &result);
 }
 
@@ -256,7 +256,7 @@ char *ioopm_hash_table_iterator_current_key(ioopm_hash_table_iterator_t *it)
     return it->current_entry->key;
 }
 
-int ioopm_hash_table_iterator_current_value(ioopm_hash_table_iterator_t *it)
+elem_t ioopm_hash_table_iterator_current_value(ioopm_hash_table_iterator_t *it)
 {
     return it->current_entry->value;
 }
@@ -267,7 +267,7 @@ void ioopm_hash_table_print(ioopm_hash_table_t *ht)
 
     while (!ioopm_hash_table_iterator_at_end(it))
     {
-        printf("%s:%d\n", ioopm_hash_table_iterator_current_key(it), ioopm_hash_table_iterator_current_value(it));
+        printf("%s:%d\n", ioopm_hash_table_iterator_current_key(it), ioopm_hash_table_iterator_current_value(it).i);
         ioopm_hash_table_iterator_advance(it);
     }
 
