@@ -223,6 +223,54 @@ void test_iterator_insert()
   ioopm_list_destroy(l2);
 }
 
+void test_str_basic()
+{
+  ioopm_list_t *l = ioopm_list_create();
+  char *arr[] = {"hej", "grodan", "boll"};
+
+  for (int i = 0; i < 3; i++)
+  {
+    ioopm_list_insert(l, i, string_elem(arr[i]));
+  };
+
+  ioopm_list_iterator_t *iter = ioopm_list_iterator_create(l);
+
+  int j = 0;
+  while (!ioopm_list_iterator_at_end(iter))
+  {
+    CU_ASSERT_EQUAL(strcmp(ioopm_list_iterator_current(iter).s, arr[j]), 0);
+    ioopm_list_iterator_advance(iter);
+    j++;
+  }
+
+  ioopm_list_iterator_destroy(iter);
+  ioopm_list_destroy(l);
+}
+
+void test_int_arr_basic()
+{
+  ioopm_list_t *l = ioopm_list_create();
+  int arr[3][2] = {{1, 2}, {3, 4}, {5, 6}};
+
+  for (int i = 0; i < 3; i++)
+  {
+    ioopm_list_insert(l, i, ptr_elem(arr[i]));
+  };
+
+  ioopm_list_iterator_t *iter = ioopm_list_iterator_create(l);
+
+  int j = 0;
+  while (!ioopm_list_iterator_at_end(iter))
+  {
+    CU_ASSERT_EQUAL(ioopm_list_iterator_current(iter).p, arr[j]);
+    ioopm_list_iterator_advance(iter);
+    j++;
+  }
+
+  ioopm_list_iterator_destroy(iter);
+  ioopm_list_destroy(l);
+}
+
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -255,6 +303,8 @@ int main()
       (CU_add_test(my_test_suite, "test iter basic", test_iter_basic) == NULL) ||
       (CU_add_test(my_test_suite, "test iter remove", test_iterator_remove) == NULL) ||
       (CU_add_test(my_test_suite, "test iter insert", test_iterator_insert) == NULL) ||
+      (CU_add_test(my_test_suite, "test iter string basic", test_str_basic) == NULL) ||
+      (CU_add_test(my_test_suite, "test iter int arr basic", test_int_arr_basic) == NULL) ||
       0)
   {
     // If adding any of the tests fails, we tear down CUnit and exit
