@@ -1,6 +1,7 @@
 #pragma once
 #include "hash_table.h"
 #include <stdbool.h>
+#include "common.h"
 
 /**
  * @file hash_table_iterator.h

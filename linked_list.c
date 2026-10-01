@@ -1,12 +1,18 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include "common.h"
 #include "linked_list.h"
 #include "list_iterator.h"
 #include <assert.h>
 
+#define int_elem(x) ((elem_t){.i = (x)})
+#define bool_elem(x) ((elem_t){.b = (x)})
+#define ptr_elem(x) ((elem_t){.p = (x)})
+#define string_elem(x) ((elem_t){.s = (x)})
+
 struct node
 {
-    int val;
+    elem_t val;
     node_t *next;
 };
 
@@ -22,7 +28,7 @@ ioopm_list_t *ioopm_list_create(void)
     return calloc(1, sizeof(ioopm_list_t));
 }
 
-static node_t *node_create(int value, node_t *next)
+static node_t *node_create(elem_t value, node_t *next)
 {
     node_t *node = calloc(1, sizeof(node_t));
     node->val = value;
@@ -42,7 +48,7 @@ void ioopm_list_destroy(ioopm_list_t *list)
     free(list);
 }
 
-static void empty_insert(ioopm_list_t *list, int value)
+static void empty_insert(ioopm_list_t *list, elem_t value)
 {
     node_t *node = node_create(value, NULL);
     list->first = node;
@@ -50,7 +56,7 @@ static void empty_insert(ioopm_list_t *list, int value)
     list->size += 1;
 }
 
-void ioopm_list_prepend(ioopm_list_t *list, int value)
+void ioopm_list_prepend(ioopm_list_t *list, elem_t value)
 {
     if (list->size == 0)
     {
@@ -64,7 +70,7 @@ void ioopm_list_prepend(ioopm_list_t *list, int value)
     }
 }
 
-void ioopm_list_append(ioopm_list_t *list, int value)
+void ioopm_list_append(ioopm_list_t *list, elem_t value)
 {
     if (list->size == 0)
     {
@@ -79,12 +85,12 @@ void ioopm_list_append(ioopm_list_t *list, int value)
     }
 }
 
-int ioopm_list_head(ioopm_list_t *list)
+elem_t ioopm_list_head(ioopm_list_t *list)
 {
     return list->first->val;
 }
 
-int ioopm_list_last(ioopm_list_t *list)
+elem_t ioopm_list_last(ioopm_list_t *list)
 {
     return list->last->val;
 }
@@ -101,17 +107,17 @@ static node_t *find_previous_node(ioopm_list_t *list, int index)
     return curr;
 }
 
-int ioopm_list_remove(ioopm_list_t *list, int index)
+elem_t ioopm_list_remove(ioopm_list_t *list, int index)
 {
     if (list->size == 0)
     {
         puts("EMPTY LIST");
-        return -99;
+        return int_elem(-99);
     }
     else if (index == 0)
     {
         node_t *temp = list->first;
-        int val = list->first->val;
+        elem_t val = list->first->val;
         list->first = list->first->next;
         free(temp);
         list->size -= 1;
@@ -121,7 +127,7 @@ int ioopm_list_remove(ioopm_list_t *list, int index)
     {
         free(list->first);
     }
-    int val = -1;
+    elem_t val = int_elem(-1);
     node_t *prev = find_previous_node(list, index);
     val = prev->next->val;
     node_t *temp = prev->next;
@@ -131,7 +137,7 @@ int ioopm_list_remove(ioopm_list_t *list, int index)
     return val;
 }
 
-void ioopm_list_insert(ioopm_list_t *list, int index, int value)
+void ioopm_list_insert(ioopm_list_t *list, int index, elem_t value)
 {
     node_t *prev = find_previous_node(list, index);
     if (list->size == 0)
@@ -161,12 +167,12 @@ bool ioopm_list_is_empty(ioopm_list_t *list)
     return (list->first == NULL);
 }
 
-int ioopm_list_get(ioopm_list_t *list, int index)
+elem_t ioopm_list_get(ioopm_list_t *list, int index)
 {
     if (list->size == 0)
     {
         puts("EMPTY LIST");
-        return -99;
+        return int_elem(-99);
     }
     if (index == 0)
     {
@@ -212,7 +218,7 @@ void ioopm_list_iterator_advance(ioopm_list_iterator_t *iter)
     iter->curr_index += 1;
 }
 
-int ioopm_list_iterator_current(ioopm_list_iterator_t *iter)
+elem_t ioopm_list_iterator_current(ioopm_list_iterator_t *iter)
 {
     return iter->current_node->val;
 }
@@ -221,7 +227,7 @@ int ioopm_list_iterator_current(ioopm_list_iterator_t *iter)
 /// @brief Remove the current element from the underlying list
 /// @param iter the iterator
 /// @return the removed element
-int ioopm_list_iterator_remove(ioopm_list_iterator_t *iter)
+elem_t ioopm_list_iterator_remove(ioopm_list_iterator_t *iter)
 {
     return ioopm_list_remove(iter->list, iter->curr_index);
 }
@@ -230,7 +236,7 @@ int ioopm_list_iterator_remove(ioopm_list_iterator_t *iter)
 /// @brief Insert a new element into the underlying list making the current element it's next
 /// @param iter the iterator
 /// @param element the element to be inserted
-void ioopm_list_iterator_insert(ioopm_list_iterator_t *iter, int element)
+void ioopm_list_iterator_insert(ioopm_list_iterator_t *iter, elem_t element)
 {
     ioopm_list_insert(iter->list, iter->curr_index, element);
     iter->current_node = find_previous_node(iter->list, iter->curr_index + 1);
