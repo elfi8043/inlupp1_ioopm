@@ -1,5 +1,6 @@
 #include "hash_table.h"
 #include "hash_table_iterator.h"
+#include "common.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
