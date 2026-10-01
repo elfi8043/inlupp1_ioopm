@@ -180,13 +180,12 @@ void test_iterator_insert()
   CU_ASSERT_EQUAL(ioopm_list_iterator_current(iter), 0);
   ioopm_list_iterator_destroy(iter);
   ioopm_list_destroy(l);
-  puts("EMPTY");
 
   // insert first
   ioopm_list_t *l2 = ioopm_list_create();
   for (int i = 0; i < 10; i++)
   {
-    ioopm_list_insert(l, i, i);
+    ioopm_list_insert(l2, i, i);
   }
 
   ioopm_list_iterator_t *iter2 = ioopm_list_iterator_create(l2);
@@ -196,7 +195,6 @@ void test_iterator_insert()
   CU_ASSERT_EQUAL(ioopm_list_iterator_current(iter2), 77);
   ioopm_list_iterator_destroy(iter2);
   ioopm_list_remove(l2, 0);
-  puts("INSERT FIRST");
 
   // insert middle
   ioopm_list_iterator_t *iter3 = ioopm_list_iterator_create(l2);
@@ -215,7 +213,6 @@ void test_iterator_insert()
     ioopm_list_iterator_advance(iter4);
   }
   ioopm_list_iterator_insert(iter4, 99);
-  print_list(l2);
   CU_ASSERT_EQUAL(ioopm_list_iterator_current(iter4), 99);
   ioopm_list_iterator_destroy(iter4);
   ioopm_list_destroy(l2);
