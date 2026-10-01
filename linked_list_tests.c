@@ -125,6 +125,102 @@ void test_iter_basic()
   ioopm_list_destroy(l);
 }
 
+void test_iterator_remove()
+{
+  ioopm_list_t *l = ioopm_list_create();
+  for (int i = 0; i < 10; i++)
+  {
+    ioopm_list_insert(l, i, i);
+  }
+
+  // remove last
+  ioopm_list_iterator_t *iter = ioopm_list_iterator_create(l);
+  for (int j = 1; j < 10; j++)
+  {
+    ioopm_list_iterator_advance(iter);
+  }
+  CU_ASSERT_EQUAL(ioopm_list_iterator_remove(iter), 9);
+  ioopm_list_iterator_destroy(iter);
+
+  // remove first
+  ioopm_list_iterator_t *iter2 = ioopm_list_iterator_create(l);
+  CU_ASSERT_EQUAL(ioopm_list_iterator_remove(iter2), 0);
+  ioopm_list_iterator_destroy(iter2);
+
+  // remove middle
+  ioopm_list_iterator_t *iter3 = ioopm_list_iterator_create(l);
+  for (int j = 1; j < 5; j++)
+  {
+    ioopm_list_iterator_advance(iter3);
+  }
+  CU_ASSERT_EQUAL(ioopm_list_iterator_remove(iter3), 5);
+  ioopm_list_iterator_destroy(iter3);
+  ioopm_list_destroy(l);
+}
+
+void print_list(ioopm_list_t *a_list)
+{
+  ioopm_list_iterator_t *it;
+  for (it = ioopm_list_iterator_create(a_list);
+       !ioopm_list_iterator_at_end(it);
+       ioopm_list_iterator_advance(it))
+  {
+    printf("%d\n", ioopm_list_iterator_current(it));
+  }
+  ioopm_list_iterator_destroy(it);
+}
+
+void test_iterator_insert()
+{
+  ioopm_list_t *l = ioopm_list_create();
+
+  // insert empty
+  ioopm_list_iterator_t *iter = ioopm_list_iterator_create(l);
+  ioopm_list_iterator_insert(iter, 0);
+  CU_ASSERT_EQUAL(ioopm_list_iterator_current(iter), 0);
+  ioopm_list_iterator_destroy(iter);
+  ioopm_list_destroy(l);
+  puts("EMPTY");
+
+  // insert first
+  ioopm_list_t *l2 = ioopm_list_create();
+  for (int i = 0; i < 10; i++)
+  {
+    ioopm_list_insert(l, i, i);
+  }
+
+  ioopm_list_iterator_t *iter2 = ioopm_list_iterator_create(l2);
+  ioopm_list_iterator_insert(iter2, 99);
+  CU_ASSERT_EQUAL(ioopm_list_iterator_current(iter2), 99);
+  ioopm_list_iterator_insert(iter2, 77);
+  CU_ASSERT_EQUAL(ioopm_list_iterator_current(iter2), 77);
+  ioopm_list_iterator_destroy(iter2);
+  ioopm_list_remove(l2, 0);
+  puts("INSERT FIRST");
+
+  // insert middle
+  ioopm_list_iterator_t *iter3 = ioopm_list_iterator_create(l2);
+  for (int j = 1; j < 5; j++)
+  {
+    ioopm_list_iterator_advance(iter3);
+  }
+  ioopm_list_iterator_insert(iter3, 99);
+  CU_ASSERT_EQUAL(ioopm_list_iterator_current(iter3), 99);
+  ioopm_list_iterator_destroy(iter3);
+
+  // insert last
+  ioopm_list_iterator_t *iter4 = ioopm_list_iterator_create(l2);
+  for (int j = 1; j < 13; j++)
+  {
+    ioopm_list_iterator_advance(iter4);
+  }
+  ioopm_list_iterator_insert(iter4, 99);
+  print_list(l2);
+  CU_ASSERT_EQUAL(ioopm_list_iterator_current(iter4), 99);
+  ioopm_list_iterator_destroy(iter4);
+  ioopm_list_destroy(l2);
+}
+
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -155,6 +251,8 @@ int main()
       (CU_add_test(my_test_suite, "test insert", test_insert) == NULL) ||
       (CU_add_test(my_test_suite, "test remove", test_remove) == NULL) ||
       (CU_add_test(my_test_suite, "test iter basic", test_iter_basic) == NULL) ||
+      (CU_add_test(my_test_suite, "test iter remove", test_iterator_remove) == NULL) ||
+      (CU_add_test(my_test_suite, "test iter insert", test_iterator_insert) == NULL) ||
       0)
   {
     // If adding any of the tests fails, we tear down CUnit and exit

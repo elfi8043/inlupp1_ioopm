@@ -108,7 +108,16 @@ int ioopm_list_remove(ioopm_list_t *list, int index)
         puts("EMPTY LIST");
         return -99;
     }
-    if (list->size == 1)
+    else if (index == 0)
+    {
+        node_t *temp = list->first;
+        int val = list->first->val;
+        list->first = list->first->next;
+        free(temp);
+        list->size -= 1;
+        return val;
+    }
+    else if (list->size == 1)
     {
         free(list->first);
     }
@@ -128,6 +137,12 @@ void ioopm_list_insert(ioopm_list_t *list, int index, int value)
     if (list->size == 0)
     {
         empty_insert(list, value);
+    }
+    else if (index == 0)
+    {
+        list->first = node_create(value, list->first);
+        list->size += 1;
+        return;
     }
     else
     {
@@ -208,10 +223,7 @@ int ioopm_list_iterator_current(ioopm_list_iterator_t *iter)
 /// @return the removed element
 int ioopm_list_iterator_remove(ioopm_list_iterator_t *iter)
 {
-    int val = ioopm_list_remove(iter->list, iter->curr_index);
-    iter->current_node = find_previous_node(iter->list);
-    iter->curr_index -= 1;
-    return val;
+    return ioopm_list_remove(iter->list, iter->curr_index);
 }
 
 /// NOTE: INSERT IS OPTIONAL TO IMPLEMENT
@@ -221,6 +233,9 @@ int ioopm_list_iterator_remove(ioopm_list_iterator_t *iter)
 void ioopm_list_iterator_insert(ioopm_list_iterator_t *iter, int element)
 {
     ioopm_list_insert(iter->list, iter->curr_index, element);
-    iter->current_node = iter->current_node->next;
-    iter->curr_index += 1;
+    iter->current_node = find_previous_node(iter->list, iter->curr_index + 1);
+    if (iter->list->size == 1)
+    {
+        iter->current_node = iter->list->first;
+    }
 }
