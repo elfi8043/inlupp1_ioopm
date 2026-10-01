@@ -1,4 +1,5 @@
 #pragma once
+#include <stddef.h>
 #include <stdbool.h>
 
 /**
@@ -38,14 +39,21 @@ bool ioopm_hash_table_lookup(ioopm_hash_table_t *ht, char *key, int *result);
 /// @brief remove any mapping from key to a value
 /// @param ht hash table operated upon
 /// @param key key to remove
-/// @return the value mapped to by key (FIXME: what if the key does not exist?)
+/// @return the value mapped to by the key and boolean true if key removed, else false e.g key nonexistent
 bool ioopm_hash_table_remove(ioopm_hash_table_t *ht, char *key, int *result);
 
-// TODO: documentation
+/// @brief check if hash table ht has certain key
+/// @param ht hash table operated upon
+/// @param key key to check
+/// @return true if ht has key else false
 bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, char *key);
 
-// TODO: documentation
+/// @brief check if hash table ht is empty
+/// @param ht hash table operated upon
+/// @return true if ht is empty else false
 bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht);
 
-// TODO: documentation
-int ioopm_hash_table_size(ioopm_hash_table_t *ht);
+/// @brief check size of a hash table ht
+/// @param ht hash table operated upon
+/// @return size of the hash table
+size_t ioopm_hash_table_size(ioopm_hash_table_t *ht);

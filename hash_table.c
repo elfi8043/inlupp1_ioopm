@@ -23,7 +23,7 @@ struct hash_table
     // DODGE: hard-coding number of buckets as No_buckets.
     // NOTE: addressing this dodge is optional.
     entry_t buckets[No_buckets];
-    int size;
+    size_t size;
 };
 
 /// @brief Create a new hash table
@@ -176,7 +176,7 @@ bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, char *key)
     return ioopm_hash_table_lookup(ht, key, &result);
 }
 
-int ioopm_hash_table_size(ioopm_hash_table_t *ht)
+size_t ioopm_hash_table_size(ioopm_hash_table_t *ht)
 {
     return ht->size;
 }
@@ -193,7 +193,7 @@ bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht)
 struct hash_table_iterator
 {
     ioopm_hash_table_t *ht;
-    int current_bucket;
+    size_t current_bucket;
     entry_t *current_entry;
 };
 
