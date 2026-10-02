@@ -2,6 +2,9 @@
 
 #include <stdbool.h>
 
+typedef bool ioopm_eq_function(elem_t a, elem_t b);
+typedef size_t ioopm_hash_function(elem_t key);
+
 typedef union elem elem_t;
 
 union elem

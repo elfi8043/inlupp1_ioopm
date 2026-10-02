@@ -25,15 +25,53 @@ struct hash_table
     // NOTE: addressing this dodge is optional.
     entry_t buckets[No_buckets];
     size_t size;
+    ioopm_eq_function *eq_fn;
+    ioopm_hash_function *hash_fn;
 };
 
 /// @brief Create a new hash table
 /// @return A new empty hash table
-ioopm_hash_table_t *ioopm_hash_table_create(void)
+ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function *hash_fn, ioopm_eq_function *key_eq_fn)
 {
     return calloc(1, sizeof(ioopm_hash_table_t));
 }
 
+// Recursive function, iterative process
+// static void destroy_linked_list(entry_t *curr)
+//{
+//    if (curr->next == NULL)
+//    {
+//        free(curr->key);
+//        free(curr);
+//    }
+//    else
+//    {
+//        // free current
+//        entry_t *next = curr->next;
+//        free(curr->key);
+//        free(curr);
+//        destroy_linked_list(next);
+//    }
+//}
+
+//// Recursive function recursive process
+// static void destroy_linked_list(entry_t *curr)
+//{
+//     if (curr->next == NULL)
+//     {
+//         free(curr->key);
+//         free(curr);
+//     }
+//     else
+//     {
+//         // free current
+//         destroy_linked_list(curr->next);
+//         free(curr->key);
+//         free(curr);
+//     }
+// }
+
+// iterative function iterative process
 static void destroy_linked_list(entry_t *curr)
 {
     while (curr != NULL)
@@ -64,17 +102,6 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
     free(ht);
 }
 
-static size_t string_knr_hash(const char *str)
-{
-    size_t result = 0;
-    while (*str != '\0')
-    {
-        result = result * 31 + ((unsigned char)*str);
-        str++;
-    }
-    return result;
-}
-
 static entry_t *entry_create(char *key, elem_t value, entry_t *next)
 {
     // TODO: change ownership, ht takes copy
@@ -87,15 +114,11 @@ static entry_t *entry_create(char *key, elem_t value, entry_t *next)
 
 static entry_t *find_previous_entry(ioopm_hash_table_t *ht, char *key)
 {
-    size_t bucket = string_knr_hash(key) % No_buckets;
+    size_t bucket = ht->hash_fn(key) % No_buckets;
     entry_t *list = &ht->buckets[bucket];
     while (list->next != NULL)
     {
-        if (strcmp(list->next->key, key) == 0)
-        {
-            break;
-        }
-        list = list->next;
+        if (ht->)
     }
     // Either we are at the end of the list or at the previous node
     return list;
@@ -109,7 +132,7 @@ bool ioopm_hash_table_remove(ioopm_hash_table_t *ht, char *key, elem_t *result)
     {
         return false;
     }
-    if (strcmp(previous->next->key, key) == 0)
+    if (ht->eq_fn(previous->next->key, key))
     {
         *result = previous->next->value;
         if (previous->next->next == NULL)
@@ -160,7 +183,7 @@ bool ioopm_hash_table_lookup(ioopm_hash_table_t *ht, char *key, elem_t *result)
     {
         return false;
     }
-    if (strcmp(previous->next->key, key) == 0)
+    if (ht->eq_fn(previous->next->key, key))
     {
         *result = previous->next->value;
         return true;
