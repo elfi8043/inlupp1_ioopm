@@ -29,25 +29,25 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht);
 /// @param ht hash table operated upon
 /// @param key key to insert
 /// @param value value to insert
-void ioopm_hash_table_insert(ioopm_hash_table_t *ht, char *key, elem_t value);
+void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value);
 
 /// @brief lookup value for key in hash table ht
 /// @param ht hash table operated upon
 /// @param key key to lookup
 /// @return the value mapped to by key (FIXME: what if the key does not exist?)
-bool ioopm_hash_table_lookup(ioopm_hash_table_t *ht, char *key, elem_t *result);
+bool ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key, elem_t *result);
 
 /// @brief remove any mapping from key to a value
 /// @param ht hash table operated upon
 /// @param key key to remove
 /// @return the value mapped to by the key and boolean true if key removed, else false e.g key nonexistent
-bool ioopm_hash_table_remove(ioopm_hash_table_t *ht, char *key, elem_t *result);
+bool ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key, elem_t *result);
 
 /// @brief check if hash table ht has certain key
 /// @param ht hash table operated upon
 /// @param key key to check
 /// @return true if ht has key else false
-bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, char *key);
+bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, elem_t key);
 
 /// @brief check if hash table ht is empty
 /// @param ht hash table operated upon
@@ -59,7 +59,9 @@ bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht);
 /// @return size of the hash table
 size_t ioopm_hash_table_size(ioopm_hash_table_t *ht);
 
-size_t ioopm_hash_int(int value);
+size_t ioopm_hash_int(elem_t value);
+
+size_t ioopm_hash_string(elem_t value);
 
 /// @brief compares if two elem_t are bools
 /// @param a first variable to compare

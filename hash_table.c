@@ -41,9 +41,9 @@ ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function *hash_fn, ioopm_
 }
 
 // Taken from chatgpt
-size_t ioopm_hash_int(int value)
+size_t ioopm_hash_int(elem_t value)
 {
-    uint32_t x = (uint32_t)value;
+    uint32_t x = (uint32_t)value.i;
     x ^= x >> 16;
     x = 0x7feb352d;
     x ^= x >> 15;
@@ -51,6 +51,17 @@ size_t ioopm_hash_int(int value)
     x ^= x >> 16;
 
     return (size_t)x;
+}
+
+size_t ioopm_hash_string(elem_t str)
+{
+  size_t result = 0;
+  while (*str.s != '\0')
+  {
+    result = result * 31 + ((unsigned char)*str.s);
+    str.s++;
+  }
+  return result;
 }
 
 // hash function compare functions
@@ -329,7 +340,7 @@ void ioopm_hash_table_print(ioopm_hash_table_t *ht)
 
     while (!ioopm_hash_table_iterator_at_end(it))
     {
-        printf("%s:%d\n", ioopm_hash_table_iterator_current_key(it), ioopm_hash_table_iterator_current_value(it).i);
+        printf("%s:%d\n", ioopm_hash_table_iterator_current_key(it).s, ioopm_hash_table_iterator_current_value(it).i);
         ioopm_hash_table_iterator_advance(it);
     }
 
