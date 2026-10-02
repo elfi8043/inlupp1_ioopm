@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <assert.h>
+#include <stdint.h>
 
 typedef struct entry entry_t;
 
@@ -14,7 +15,7 @@ typedef struct entry entry_t;
 
 struct entry
 {
-    char *key;     // holds the key
+    elem_t key;     // holds the key
     elem_t value;  // holds the value
     entry_t *next; // points to the next entry (possibly NULL)
 };
@@ -33,7 +34,44 @@ struct hash_table
 /// @return A new empty hash table
 ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function *hash_fn, ioopm_eq_function *key_eq_fn)
 {
-    return calloc(1, sizeof(ioopm_hash_table_t));
+    ioopm_hash_table_t *ht = calloc(1, sizeof(ioopm_hash_table_t));
+    ht->hash_fn = hash_fn;
+    ht->eq_fn = key_eq_fn;
+    return ht;
+}
+
+// Taken from chatgpt
+ size_t ioopm_hash_int(int value)
+{
+    uint32_t x = (uint32_t)value;
+    x ^= x >> 16;
+    x = 0x7feb352d;
+    x ^= x >> 15;
+    x= 0x846ca68b;
+    x ^= x >> 16;
+
+    return (size_t)x;
+}
+
+// hash function compare functions
+bool ioopm_bool_comp(elem_t a, elem_t b)
+{
+  return a.b == b.b;
+}
+
+bool ioopm_string_comp(elem_t a, elem_t b)
+{
+  return (strcmp(a.s, b.s) == 0);
+}
+
+bool ioopm_int_comp(elem_t a, elem_t b)
+{
+  return a.i == b.i;
+}
+
+bool ioopm_float_comp(elem_t a, elem_t b)
+{
+  return a.f == b.f;
 }
 
 // Recursive function, iterative process
@@ -102,7 +140,7 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
     free(ht);
 }
 
-static entry_t *entry_create(char *key, elem_t value, entry_t *next)
+static entry_t *entry_create(elem_t key, elem_t value, entry_t *next)
 {
     // TODO: change ownership, ht takes copy
     entry_t *entry = calloc(1, sizeof(entry_t));
@@ -112,19 +150,23 @@ static entry_t *entry_create(char *key, elem_t value, entry_t *next)
     return entry;
 }
 
-static entry_t *find_previous_entry(ioopm_hash_table_t *ht, char *key)
+static entry_t *find_previous_entry(ioopm_hash_table_t *ht, elem_t key)
 {
     size_t bucket = ht->hash_fn(key) % No_buckets;
     entry_t *list = &ht->buckets[bucket];
     while (list->next != NULL)
     {
-        if (ht->)
+        if (ht->eq_fn(list->next->key, key))
+        {
+            break;
+        }
+        list = list->next;
     }
     // Either we are at the end of the list or at the previous node
     return list;
 }
 
-bool ioopm_hash_table_remove(ioopm_hash_table_t *ht, char *key, elem_t *result)
+bool ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key, elem_t *result)
 {
     entry_t *previous = find_previous_entry(ht, key);
 
@@ -158,7 +200,7 @@ bool ioopm_hash_table_remove(ioopm_hash_table_t *ht, char *key, elem_t *result)
     }
 }
 
-void ioopm_hash_table_insert(ioopm_hash_table_t *ht, char *key, elem_t value)
+void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
 {
     // find previous entry, or the last entry if the key does not exist
     entry_t *previous = find_previous_entry(ht, key);
@@ -175,7 +217,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, char *key, elem_t value)
     }
 }
 
-bool ioopm_hash_table_lookup(ioopm_hash_table_t *ht, char *key, elem_t *result)
+bool ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key, elem_t *result)
 {
     entry_t *previous = find_previous_entry(ht, key);
 
@@ -194,7 +236,7 @@ bool ioopm_hash_table_lookup(ioopm_hash_table_t *ht, char *key, elem_t *result)
     }
 }
 
-bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, char *key)
+bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, elem_t key)
 {
     elem_t result = int_elem(-1);
     return ioopm_hash_table_lookup(ht, key, &result);

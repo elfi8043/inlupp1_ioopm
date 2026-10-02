@@ -19,7 +19,7 @@ typedef struct hash_table ioopm_hash_table_t;
 
 /// @brief Create a new hash table
 /// @return A new empty hash table
-ioopm_hash_table_t *ioopm_hash_table_create(void);
+ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function *hash_fn, ioopm_eq_function *key_eq_fn);
 
 /// @brief Delete a hash table and free its memory
 /// @param ht a hash table to be deleted
@@ -58,3 +58,29 @@ bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht);
 /// @param ht hash table operated upon
 /// @return size of the hash table
 size_t ioopm_hash_table_size(ioopm_hash_table_t *ht);
+
+size_t ioopm_hash_int(int value);
+
+/// @brief compares if two elem_t are bools
+/// @param a first variable to compare
+/// @param b second variable to compare
+/// @return true if a and b are both bools
+bool ioopm_bool_comp(elem_t a, elem_t b);
+
+/// @brief compares if two elem_t are strings
+/// @param a first variable to compare
+/// @param b second variable to compare
+/// @return true if a and b are both strings
+bool ioopm_string_comp(elem_t a, elem_t b);
+
+/// @brief compares if two elem_t are ints
+/// @param a first variable to compare
+/// @param b second variable to compare
+/// @return true if a and b are both ints
+bool ioopm_int_comp(elem_t a, elem_t b);
+
+/// @brief compares if two elem_t are floats
+/// @param a first variable to compare
+/// @param b second variable to compare
+/// @return true if a and b are both floats
+bool ioopm_float_comp(elem_t a, elem_t b);

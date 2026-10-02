@@ -407,6 +407,25 @@ void test_elem_t()
   ioopm_hash_table_destroy(ht);
 }
 
+void test_int_key()
+{
+  // create new hash table
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(ioopm_hash_int, ioopm_int_comp);
+
+  char *key = 1;
+  char *key2 = 2;
+  char *key3 = 3;
+  char *key4 = 4;
+  elem_t value = string_elem("Hej");
+  elem_t value2 = string_elem("där");
+  elem_t result = int_elem(-1);
+
+  // insert key-value pair and check that the mapping exists
+  ioopm_hash_table_insert(ht, key, value);
+  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, key));
+  CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht, key2));
+}
+
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
