@@ -12,7 +12,7 @@ union elem
     void *p;
     char *s;
 };
-
+//test push
 typedef union elem elem_t;
 
 typedef bool ioopm_eq_function(elem_t a, elem_t b);
