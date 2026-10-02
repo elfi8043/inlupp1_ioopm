@@ -15,7 +15,7 @@ typedef struct entry entry_t;
 
 struct entry
 {
-    elem_t key;     // holds the key
+    elem_t key;    // holds the key
     elem_t value;  // holds the value
     entry_t *next; // points to the next entry (possibly NULL)
 };
@@ -41,13 +41,13 @@ ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function *hash_fn, ioopm_
 }
 
 // Taken from chatgpt
- size_t ioopm_hash_int(int value)
+size_t ioopm_hash_int(int value)
 {
     uint32_t x = (uint32_t)value;
     x ^= x >> 16;
     x = 0x7feb352d;
     x ^= x >> 15;
-    x= 0x846ca68b;
+    x = 0x846ca68b;
     x ^= x >> 16;
 
     return (size_t)x;
@@ -56,22 +56,22 @@ ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function *hash_fn, ioopm_
 // hash function compare functions
 bool ioopm_bool_comp(elem_t a, elem_t b)
 {
-  return a.b == b.b;
+    return a.b == b.b;
 }
 
 bool ioopm_string_comp(elem_t a, elem_t b)
 {
-  return (strcmp(a.s, b.s) == 0);
+    return (strcmp(a.s, b.s) == 0);
 }
 
 bool ioopm_int_comp(elem_t a, elem_t b)
 {
-  return a.i == b.i;
+    return a.i == b.i;
 }
 
 bool ioopm_float_comp(elem_t a, elem_t b)
 {
-  return a.f == b.f;
+    return a.f == b.f;
 }
 
 // Recursive function, iterative process
@@ -115,7 +115,6 @@ static void destroy_linked_list(entry_t *curr)
     while (curr != NULL)
     {
         entry_t *new_curr = curr->next;
-        free(curr->key);
         free(curr);
         curr = new_curr;
     }
@@ -144,7 +143,7 @@ static entry_t *entry_create(elem_t key, elem_t value, entry_t *next)
 {
     // TODO: change ownership, ht takes copy
     entry_t *entry = calloc(1, sizeof(entry_t));
-    entry->key = strdup(key);
+    entry->key = key;
     entry->value = value;
     entry->next = next;
     return entry;
@@ -181,14 +180,12 @@ bool ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key, elem_t *result)
         {
             entry_t *temp = previous->next;
             previous->next = NULL;
-            free(temp->key);
             free(temp);
         }
         else
         {
             entry_t *temp = previous->next;
             previous->next = previous->next->next;
-            free(temp->key);
             free(temp);
         }
         ht->size -= 1;
@@ -316,7 +313,7 @@ void ioopm_hash_table_iterator_advance(ioopm_hash_table_iterator_t *it)
     skip_sentinel_nodes(it);
 }
 
-char *ioopm_hash_table_iterator_current_key(ioopm_hash_table_iterator_t *it)
+elem_t ioopm_hash_table_iterator_current_key(ioopm_hash_table_iterator_t *it)
 {
     return it->current_entry->key;
 }
