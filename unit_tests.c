@@ -254,7 +254,6 @@ void test_iterating_over_ht()
   ioopm_hash_table_insert(ht, key, value);
   ioopm_hash_table_iterator_t *it2 = ioopm_hash_table_iterator_create(ht);
 
-  puts(ioopm_hash_table_iterator_current_key(it2));
   CU_ASSERT_TRUE(strcmp(ioopm_hash_table_iterator_current_key(it2), key) == 0);
 
   CU_ASSERT_EQUAL(value.i, ioopm_hash_table_iterator_current_value(it2).i);
@@ -327,24 +326,71 @@ void test_same_bucket()
 
   bool visited[3] = {false, false, false};
   ioopm_hash_table_iterator_t *it = ioopm_hash_table_iterator_create(ht);
-  int iteration_count = 0;
   while (!ioopm_hash_table_iterator_at_end(it))
   {
-    if (ioopm_hash_table_iterator_current_key(it) == "ab")
+    if (strcmp(ioopm_hash_table_iterator_current_key(it), "ab") == 0)
     {
       visited[0] = true;
     }
-    if (ioopm_hash_table_iterator_current_key(it) == "as")
+    if (strcmp(ioopm_hash_table_iterator_current_key(it), "as") == 0)
     {
       visited[1] = true;
     }
-    if (ioopm_hash_table_iterator_current_key(it) == "bv")
+    if (strcmp(ioopm_hash_table_iterator_current_key(it), "bv") == 0)
     {
       visited[2] = true;
     }
 
     ioopm_hash_table_iterator_advance(it);
-    iteration_count += 1;
+  }
+  for (int i = 0; i < 3; i++)
+  {
+    CU_ASSERT_TRUE(visited[i]);
+  }
+  ioopm_hash_table_iterator_destroy(it);
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_elem_t()
+{
+  // create new hash table
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  char *key1 = "abc";
+  char *key2 = "def";
+  char *key3 = "ghi";
+
+  elem_t value1 = string_elem("grodan");
+  int arr[] = {1, 2, 3};
+  elem_t value2 = ptr_elem(arr);
+  elem_t value3 = bool_elem(true);
+
+  ioopm_hash_table_insert(ht, key1, value1);
+  ioopm_hash_table_insert(ht, key2, value2);
+  ioopm_hash_table_insert(ht, key3, value3);
+
+  bool visited[3] = {false, false, false};
+  ioopm_hash_table_iterator_t *it = ioopm_hash_table_iterator_create(ht);
+  while (!ioopm_hash_table_iterator_at_end(it))
+  {
+    if (strcmp(ioopm_hash_table_iterator_current_key(it), "abc") == 0 && strcmp(ioopm_hash_table_iterator_current_value(it).s, "grodan") == 0)
+    {
+
+      visited[0] = true;
+    }
+    if (strcmp(ioopm_hash_table_iterator_current_key(it), "def") == 0 && ioopm_hash_table_iterator_current_value(it).p == arr)
+    {
+      visited[1] = true;
+    }
+    if (strcmp(ioopm_hash_table_iterator_current_key(it), "ghi") == 0 && ioopm_hash_table_iterator_current_value(it).b == true)
+    {
+      visited[2] = true;
+    }
+
+    ioopm_hash_table_iterator_advance(it);
+  }
+  for (int i = 0; i < 3; i++)
+  {
+    CU_ASSERT_TRUE(visited[i]);
   }
   ioopm_hash_table_iterator_destroy(it);
   ioopm_hash_table_destroy(ht);
@@ -383,7 +429,8 @@ int main()
       (CU_add_test(my_test_suite, "Test iterating over table", test_iterating_over_ht) == NULL) ||
       (CU_add_test(my_test_suite, "Test iterator several", test_iterator_several_entries) == NULL) ||
       (CU_add_test(my_test_suite, "Test same bucket", test_same_bucket) == NULL) ||
-      (CU_add_test(my_test_suite, "Test iterating over hashtable", test_iterating_over_ht) == NULL) || 0)
+      (CU_add_test(my_test_suite, "Test iterating over hashtable", test_iterating_over_ht) == NULL) ||
+      (CU_add_test(my_test_suite, "Test elem_t", test_elem_t) == NULL) || 0)
   {
     // If adding any of the tests fails, we tear down CUnit and exit
     CU_cleanup_registry();
