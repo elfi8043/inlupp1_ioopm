@@ -20,8 +20,7 @@ ht_coverage: hashtable_coverage
 	gcovr --html-details --branches -o ht_coverage.html
 
 clean:
-	rm ll_tests
-	rm ht_tests
+	rm hashtable_coverage
 	rm -f linked_list_coverage
 	rm -f coverage*
 	rm -f ht_coverage*

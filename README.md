@@ -8,6 +8,11 @@ The following files can be created using make
 | make ll_coverage | ll_coverage.html | Compiles linked_list.c with its tests and runs gcovr on it. This produces a html coverage report.                           |
 | make freq        | freq             | Compiles an example program that uses the hash table to count the frequency of words in text files. Usage: freq file1 file2 |
 | make clean       | n/a              | cleans the directory from coverage files.                                                                                   |
+
+| Test        | Lines | Functions | Branches |
+| ----------- | ----- | --------- | -------- |
+| ll_coverage | 93.3% | 97.3%     | 83.3%    |
+| ht_coverage | 90.2% | 88.2&     | 88.2%    |
 # Hash Table
 Generic hash table implementation in C using a union datatype *elem_t* as keys and values. The hashtable supports different types of values and keys using user supplied hash and equality functions. 
 
