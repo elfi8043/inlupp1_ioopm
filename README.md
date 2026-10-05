@@ -28,6 +28,7 @@ The implementation uses a linked list to handle collisions and provides an itera
 - Iterator
 - Built in hash functions for integers and strings.
 - Built in equality functions for integers, strings, booleans and floats
+- Hard coded number of buckets is 17. Change NO_BUCKETS variable to desired size.
 ### Datatypes
 The hash table uses the following `elem_t` union to store keys and values:
 
@@ -114,6 +115,49 @@ Destroying the hash table frees:
 The hash table stores `elem_t` values directly. It does **not** make copies of memory referenced by pointers such as `char *s` or `void *p`.
 
 This means that the caller is responsible for both maintaining the pointers and also freeing their memory. 
+
+## Initial profiling results
+For profiling we used the freq.c program which counts the frequency of words in text files.
+
+We tested different files with varying amounts of words and word length. The top three most time consuming functions across all tests.
+
+1. find_previous_entry
+2. ioopm_string_comp
+3. string_knr_hash
+
+For the small wordlist it was:
+1. cmp_freq_words
+2. find_previous_entry
+3. string_knr_hash
+
+For the 1k -long-words wordlist:
+1. ioopm_string_comp
+2. find_previous_entry
+3. string_knr_hash
+
+For the 10k-words wordlist:
+1. ioopm_string_comp
+2. find_previous_entry
+3. string_knr_hash
+
+For the 16k-words wordlist:
+1. find_previous_entry
+2. cmp_freq_reverse
+3. ioopm_string_comp
+
+The following functions are library functions:
+- find_previous_entry
+- ioopm_string_comp
+- string_knr_hash
+
+The top three functions are not consistent primarily because how the role word length and word amount plays. Longer words will take longer time in the comparison function and the hash function which has a time complexity of O(n). That is why the ioopm_string_comp function dominates the test with the 1k-long-word list. On the other hand if you have more words but they are shorter the hashtable will grow which increases the time it takes to find the previous entry because that function has a time complexity of O(n) where n is the size of the hashtable. 
+
+This is to be expected.
+
+##### Improvements
+- Saving already hashed valeus in some datastructure where the lookup time would be closer to O(1) so that we would not have to recalculate the hash every time.
+- Increasing the number of buckets would result in shorter linked-lists which in turn would decrease the amount of time need to lookup previous entry i.e. decrease collisions.
+- If the words were represented as an integer (using the hash function for example) the comparisons would be much faster since comparing inte have O(1). However this would likely cause problems elsewhere and would be a headache to implement.
 
 # Linked List
 Generic linked list implementation in c. This data structure also uses the union datatype elem_t in order to support using different types of elements. Using different types of elements in the same list at the same time is also supported. 
