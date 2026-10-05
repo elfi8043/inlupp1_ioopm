@@ -33,35 +33,40 @@ void test_list_is_empty()
 
 void test_append()
 {
+  // create list and append elements
   ioopm_list_t *l = ioopm_list_create();
   for (int i = 0; i < 12; i++)
   {
     ioopm_list_append(l, int_elem(i));
   };
+  // test if appended element exists
   CU_ASSERT_EQUAL(ioopm_list_get(l, 5).i, 5);
   ioopm_list_destroy(l);
 }
 
 void test_prepend()
 {
+  // create list and prepend elements
   ioopm_list_t *l = ioopm_list_create();
   for (int i = 0; i < 10; i++)
   {
     ioopm_list_prepend(l, int_elem(i));
   };
-
+  // test if prepended elements exists
   CU_ASSERT_EQUAL(ioopm_list_get(l, 5).i, 4);
   ioopm_list_destroy(l);
 }
 
 void test_append_prepend()
 {
+  // create list and append and prepend elements
   ioopm_list_t *l = ioopm_list_create();
   for (int i = 0; i < 10; i++)
   {
     ioopm_list_append(l, int_elem(i));
     ioopm_list_prepend(l, int_elem(i));
   };
+  // test if appended and prepended elements exists
   CU_ASSERT_EQUAL(ioopm_list_head(l).i, 9);
   CU_ASSERT_EQUAL(ioopm_list_last(l).i, 9);
   ioopm_list_destroy(l);
@@ -69,11 +74,13 @@ void test_append_prepend()
 
 void test_insert()
 {
+  // create list and insert elements
   ioopm_list_t *l = ioopm_list_create();
   for (int i = 0; i < 10; i++)
   {
     ioopm_list_insert(l, i, int_elem(i));
   };
+  // test if inserted element exists
   CU_ASSERT_EQUAL(ioopm_list_get(l, 5).i, 5);
   ioopm_list_destroy(l);
 }

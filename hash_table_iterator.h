@@ -1,13 +1,13 @@
 #pragma once
 #include "hash_table.h"
-#include <stdbool.h>
 #include "common.h"
+#include <stdbool.h>
 
 /**
  * @file hash_table_iterator.h
- * @author write both your names here
- * @date 1 Sep 2022
- * @brief Simple hash table iterator
+ * @author Elis Filén, Alexander Thoresson
+ * @date 22 Sep 2026
+ * @brief simple hash table iterator
  *
  * Hash table iterators provide an interface to iterate through all entries in a hash table.
  * An iterator is either positioned at an entry, called the current entry, or it is positioned at-the-end, if it has already iterated through all entries.

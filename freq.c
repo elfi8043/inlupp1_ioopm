@@ -7,7 +7,10 @@
 
 #define Delimiters "+-#@()[]{}.,:;!? \t\n\r"
 
-size_t string_knr_hash(elem_t str)
+/// @brief returns a hash value of str
+/// @param str key to get hash value of
+/// @return hash value of str
+static size_t string_knr_hash(elem_t str)
 {
     size_t result = 0;
 
